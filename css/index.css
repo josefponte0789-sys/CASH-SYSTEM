@@ -1,0 +1,27 @@
+body{
+    background-color: black !important;
+}
+
+.group-input{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+   
+  
+}
+
+.form-floating, .btn{
+    margin-bottom: 15px;
+}
+
+
+
+.wrapper{
+    margin: 25px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+
+
+}
