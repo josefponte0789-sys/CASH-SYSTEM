@@ -4,7 +4,7 @@ userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
 
-    const data = {
+    const formData = {
         clientName: document.getElementById("clientName").value,
         codeName: document.getElementById("codeName").value,
         dateTime: document.getElementById("dateTime").value,
@@ -12,10 +12,11 @@ userForm.addEventListener("submit", async (event) => {
 
     }
 
-    const result = await window.api.saveForm(data);
+    const result = await window.api.saveForm(formData);
 
 
     if (result.success) {
+        console.log("Saved at:", result.path)
         alert("Data saved successfully!"); 
         userForm.reset();
 
