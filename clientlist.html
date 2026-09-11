@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link href="css/datatables.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/clientlist.css">
+    <title>List of Clients</title>
+</head>
+<body>
+
+     <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">CRES</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="index.html">Encode Data</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="clientlist.html">Client List</a>
+        </li>
+    
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="wrapper">
+    <div class="table-container">
+        <table id="myTable" class="myTable hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                        <th>Age</th>
+                        <th>Start date</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lael Greer</td>
+                        <td>Systems Administrator</td>
+                        <td>London</td>
+                        <td>21</td>
+                        <td>2009-02-27</td>
+                        <td>$103,500</td>
+                    </tr>
+                    <tr>
+                        <td>Jonas Alexander</td>
+                        <td>Developer</td>
+                        <td>San Francisco</td>
+                        <td>30</td>
+                        <td>2010-07-14</td>
+                        <td>$86,500</td>
+                    </tr>
+                    <tr>
+                        <td>Shad Decker</td>
+                        <td>Regional Director</td>
+                        <td>Edinburgh</td>
+                        <td>51</td>
+                        <td>2008-11-13</td>
+                        <td>$183,000</td>
+                    </tr>
+                    <tr>
+                        <td>Michael Bruce</td>
+                        <td>JavaScript Developer</td>
+                        <td>Singapore</td>
+                        <td>29</td>
+                        <td>2011-06-27</td>
+                        <td>$183,000</td>
+                    </tr>
+                    <tr>
+                        <td>Donna Snider</td>
+                        <td>Customer Support</td>
+                        <td>New York</td>
+                        <td>27</td>
+                        <td>2011-01-25</td>
+                        <td>$112,000</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+    </div>
+</div>
+    
+
+
+
+
+<script src="js/datatables.js"></script>
+<script>
+// Initialise a DataTable
+const table = new DataTable('#myTable', {
+    // Options
+});
+</script>
+<script src="js/datatables.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+<script src="js/renderer.js"></script>
+
+</body>
+</html>

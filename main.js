@@ -41,7 +41,7 @@ app.whenReady().then(() => {
     createWindow()
 });
 
-ipcMain.handle('save-form', async (formData) => {
+ipcMain.handle('save-form', async (event, formData) => {
 
     try {
         const stmt = db.prepare(

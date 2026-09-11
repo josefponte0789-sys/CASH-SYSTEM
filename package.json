@@ -10,8 +10,8 @@
   "author": "j. ponte",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^44.3.0",
-    "electron-rebuild": "^3.2.9"
+    "@electron/rebuild": "^4.2.0",
+    "electron": "^44.3.0"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3"

@@ -21,6 +21,8 @@ userForm.addEventListener("submit", async (event) => {
         userForm.reset();
 
     } else {
-        alert("An error has occurred.")
+         console.error(result.error);
+    alert("An error has occurred: ");
+        
     }
 })
