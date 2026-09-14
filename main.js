@@ -62,7 +62,7 @@ ipcMain.handle('get-data', async () => {
         const rows = db.prepare(
             'SELECT * FROM clients ORDER BY id DESC'
         ).all();
-        stmt.run(formData.clientName, formData.codeName, formData.dateTime);
+    
         
         return { success: true, data:rows };
     } catch (err) {
