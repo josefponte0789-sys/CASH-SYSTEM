@@ -4,7 +4,7 @@ userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = {
-        clientName: document.getElementById("clientName").value,
+        clientName: document.getElementById("clientName").value.toUpperCase(),
         codeName: document.getElementById("codeName").value,
         dateTime: document.getElementById("dateTime").value,
     }

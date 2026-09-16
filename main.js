@@ -60,11 +60,39 @@ ipcMain.handle('get-data', async () => {
 
     try {
         const rows = db.prepare(
-            'SELECT * FROM clients ORDER BY id DESC'
+            'SELECT * FROM clients'
         ).all();
     
         
         return { success: true, data:rows };
+    } catch (err) {
+        return { success: false, error: err.message };
+
+    }
+})
+
+ipcMain.handle('get-client', async (event, id) => {
+
+    try {
+      const stmt = db.prepare("SELECT * FROM clients WHERE id = ?")
+        const client = stmt.get(id);
+        return { success: true, client };
+    } catch (err) {
+        return { success: false, error: err.message };
+
+    }
+})
+
+
+ipcMain.handle('update-form', async (event, formData) => {
+
+    try {
+        const stmt = db.prepare(
+            'UPDATE clients set clientName = ?, codeName = ?, dateTime =? WHERE id = ?'
+        );
+        stmt.run(formData.clientName, formData.codeName, formData.dateTime, formData.id);
+        
+        return { success: info.changes > 0 };
     } catch (err) {
         return { success: false, error: err.message };
 
