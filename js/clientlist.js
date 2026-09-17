@@ -1,6 +1,3 @@
-// Initialise a DataTable
-
-
 
 
 async function loadData() {
@@ -20,8 +17,7 @@ async function loadData() {
             <td>${client.clientName}</td>
             <td>${client.codeName}</td>
             <td>${client.dateTime}</td>
-            <td class="action-buttoncontainers"><button type="button" data-id=${client.id} class="btn btn-primary edit-btn">Edit</button> <button type="button" class="btn btn-warning">Edit</button></td>
-        </tr>
+            <td class="action-buttoncontainers"><button type="button" data-id=${client.id} class="btn btn-primary edit-btn">Edit/View</button>
     `).join('');
 
 
