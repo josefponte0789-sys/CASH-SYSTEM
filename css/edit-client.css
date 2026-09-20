@@ -1,3 +1,45 @@
-body{
+body {
     background-color: #1e2124 !important;
+}
+
+.wrapper{
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5in;
+    text-align: center;
+    
+   
+}
+.group-input {
+    padding: 15px;
+    background-color: white;
+    border-radius: 10px;
+    
+    
+}
+
+.video-capture-screen{
+    height: 460px;
+    width: 640px;
+    background-color: black;
+    margin-bottom: 15px;
+}   
+
+
+.group-input input{
+    width: 100%;
+}
+
+.form-floating{
+    margin-bottom: 15px;
+}
+
+.save-button {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
 }

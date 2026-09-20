@@ -1,63 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/edit-client.css">
+    </head>
 
-<body>
+    <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">CRES</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.html">Encode Data</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="clientlist.html">Client List</a>
-                    </li>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">CRES</a>
+                <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                                href="index.html">Encode Data</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clientlist.html">Client
+                                List</a>
+                        </li>
 
-
-                </ul>
+                    </ul>
+                </div>
             </div>
+        </nav>
+        <div class="wrapper">
+            <form id="editForm">
+                <div class="group-input">
+                    <h1>Edit Client Data</h1>
+                     <video src="" class="video-capture-screen"></video>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="clientName"
+                            placeholder="Ex. Juan Dela Cruz">
+                        <label for="clientName" name="clientName">Name of
+                            Client</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="codeName"
+                            placeholder="Ex. 1234567">
+                        <label for=" floatingPassword"
+                            name="codeName">Code</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="date" class="form-control" id="dateTime"
+                            placeholder="MM/DD/YYYY">
+                        <label for="floatingPassword"
+                            name="dateTime">Date</label>
+                    </div>
+                    <div class="save-button">
+                        <button type="submit"
+                            class="btn btn-outline-primary">Save Data</button>
+                    </div>
+
+                </div>
+            </form>
         </div>
-    </nav>
-    <div class="wrapper">
-        <form id="editForm">
-            <div class="group-input">
 
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="clientName" placeholder="Ex. Juan Dela Cruz">
-                    <label for="clientName" name="clientName">Name of Client</label>
-                </div>
-                <div class="form-floating">
-                    <input type="number" class="form-control" id="codeName" placeholder="Ex. 1234567">
-                    <label for=" floatingPassword" name="codeName">Code</label>
-                </div>
-                <div class="form-floating">
-                    <input type="date" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
-                    <label for="floatingPassword" name="dateTime">Date</label>
-                </div>
-                <button type="submit" class="btn btn-outline-primary">Save Data</button>
+        <script src="js/bootstrap.bundle.js"></script>
+        <script src="js/edit-client.js"></script>
 
-
-            </div>
-        </form>
-    </div>
-
-
-    <script src="js/bootstrap.bundle.js"></script>
-    <script src="js/edit-client.js"></script>
-
-</body>
+    </body>
 
 </html>
