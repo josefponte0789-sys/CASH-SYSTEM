@@ -1,5 +1,6 @@
 const userForm = document.getElementById("userForm")
 
+
 userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -20,3 +21,5 @@ userForm.addEventListener("submit", async (event) => {
         alert("An error has occurred.");
     }
 })
+
+

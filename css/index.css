@@ -12,8 +12,25 @@ body{
    
   
 }
+@keyframes tablepop {
+  from {
+    transform: scale(1.025);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 
-.form-floating, .btn{
+
+#userForm{
+  display: none;
+  animation: tablepop 1.25s ease forwards;
+
+}
+
+.form-floating{
     margin-bottom: 15px;
 }
 .video-capture-screen{
@@ -34,4 +51,8 @@ body{
     
     
 
+}
+
+#startCamera{
+    margin-bottom: 15px;
 }

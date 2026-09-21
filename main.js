@@ -32,7 +32,8 @@ app.whenReady().then(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         clientName TEXT NOT NULL,
         codeName TEXT NOT NULL,
-        dateTime TEXT NOT NULL
+        dateTime TEXT NOT NULL,
+        clientImage BLOB NOT NULL
         )
         
     `)
