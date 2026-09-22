@@ -8,6 +8,7 @@ userForm.addEventListener("submit", async (event) => {
         clientName: document.getElementById("clientName").value.toUpperCase(),
         codeName: document.getElementById("codeName").value,
         dateTime: document.getElementById("dateTime").value,
+        userWebcam: document.getElementById("userWebcam").value,
     }
 
     const result = await window.api.saveForm(formData);

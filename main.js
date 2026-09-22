@@ -33,7 +33,7 @@ app.whenReady().then(() => {
         clientName TEXT NOT NULL,
         codeName TEXT NOT NULL,
         dateTime TEXT NOT NULL,
-        clientImage BLOB NOT NULL
+        userWebcam BLOB
         )
         
     `)
@@ -47,9 +47,9 @@ ipcMain.handle('save-form', async (event, formData) => {
 
     try {
         const stmt = db.prepare(
-            'INSERT INTO clients (clientName, codeName, dateTime) VALUES (?, ?, ?)'
+            'INSERT INTO clients (clientName, codeName, dateTime, userWebcam) VALUES (?, ?, ?, ?)'
         );
-        stmt.run(formData.clientName, formData.codeName, formData.dateTime);
+        stmt.run(formData.clientName, formData.codeName, formData.dateTime, formData.userWebcam);
         
         return { success: true };
     } catch (err) {
@@ -92,7 +92,9 @@ ipcMain.handle('update-form', async (event, formData) => {
         const stmt = db.prepare(
             'UPDATE clients set clientName = ?, codeName = ?, dateTime =? WHERE id = ?'
         );
-        stmt.run(formData.clientName, formData.codeName, formData.dateTime, formData.id);
+        const info = stmt.run(
+            formData.clientName, formData.codeName, formData.dateTime, formData.id
+        );
         
         return { success: info.changes > 0 };
     } catch (err) {

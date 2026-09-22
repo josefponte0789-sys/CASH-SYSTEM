@@ -40,26 +40,26 @@
         </div>
     </nav>
 
+    <div id="tableWrapper">
+        <div class="wrapper" id="tableContainer">
+            <div class="table-container">
+                <table id="myTable" class="myTable hover">
+                    <thead>
+                        <tr>
+                            <th>Client Name</th>
+                            <th>Code</th>
+                            <th>Date Today</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableDataOutput">
 
-    <div class="wrapper" id="tableContainer">
-        <div class="table-container">
-            <table id="myTable" class="myTable hover">
-                <thead>
-                    <tr>
-                        <th>Client Name</th>
-                        <th>Code</th>
-                        <th>Date Today</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="tableDataOutput">
+                    </tbody>
 
-                </tbody>
-
-            </table>
+                </table>
+            </div>
         </div>
     </div>
-
 
 
 
@@ -74,7 +74,7 @@
 
         setTimeout(() => {
             loader.style.display = "none";
-            document.getElementById("tableContainer").style.display = "block";
+            document.getElementById("tableWrapper").style.display = "block";
         }, 550)
 
 
