@@ -1,5 +1,6 @@
 body{
     background-color: #1e2124 !important;
+    overflow-x: hidden;
 }
 
 .wrapper{
@@ -34,6 +35,7 @@ body{
 #tableWrapper{
   display: none;
   animation: tablepop 1.25s ease forwards;
+  
 
 }
 

@@ -43,3 +43,24 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.client-photo{
+    margin-bottom: 15px;
+    width: 600px;
+    height: 440px;
+}
+
+.retake-photo{
+    margin-bottom: 15px;
+}
+
+
+.video-capture-screen{
+    margin-bottom: 15px;
+    width: 600px;
+    height: 440px;
+}
+
+button{
+    width: 100%;
+}

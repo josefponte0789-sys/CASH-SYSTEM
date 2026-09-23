@@ -58,6 +58,8 @@ ipcMain.handle('save-form', async (event, formData) => {
     }
 })
 
+
+//for the table
 ipcMain.handle('get-data', async () => {
 
     try {
@@ -73,11 +75,17 @@ ipcMain.handle('get-data', async () => {
     }
 })
 
+
+//just the clients
 ipcMain.handle('get-client', async (event, id) => {
 
     try {
       const stmt = db.prepare("SELECT * FROM clients WHERE id = ?")
         const client = stmt.get(id);
+        if (client && client.userWebcam) {
+            client.userWebcamUrl = `data:image/png;base64,${client.userWebcam.toString('base64')}`;
+            delete client.userWebcam;
+        }
         return { success: true, client };
     } catch (err) {
         return { success: false, error: err.message };
@@ -90,10 +98,10 @@ ipcMain.handle('update-form', async (event, formData) => {
 
     try {
         const stmt = db.prepare(
-            'UPDATE clients set clientName = ?, codeName = ?, dateTime =? WHERE id = ?'
+            'UPDATE clients set clientName = ?, codeName = ?, dateTime = ?, userWebcam = ? WHERE id = ?'
         );
         const info = stmt.run(
-            formData.clientName, formData.codeName, formData.dateTime, formData.id
+            formData.clientName, formData.codeName, formData.dateTime, formData.userWebcam, formData.id
         );
         
         return { success: info.changes > 0 };
