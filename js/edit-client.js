@@ -5,11 +5,16 @@ const editForm = document.getElementById("editForm");
 const clientPhoto = document.getElementById("clientPhoto");
 let stream = null;
 let clientId = null;
+const videoDate = document.getElementById("videoDate");
+const dateTimeInput = document.getElementById("dateTime");
 
 
 async function retakePhoto() {
 
-
+    dateTimeInput.addEventListener("change", () => {
+    videoDate.textContent = dateTimeInput.value;
+    });
+    
     const constraints = {
         audio: false,
         video: true,
@@ -92,6 +97,20 @@ function captureFrame(videoEl) {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
+    
+    ctx.font = "30px Arial";
+    ctx.fontWeight = "bold";
+
+    const x = 30;
+    const y = canvas.height - 30;
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(dateTimeInput.value, x, y);
+
+    ctx.fillStyle = "white";
+    ctx.fillText(dateTimeInput.value, x, y);
+
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
             if (!blob) return reject(new Error("Failed to capture frame"))
@@ -109,14 +128,15 @@ editForm.addEventListener("submit", async (event) => {
 
  
     try {
-        const webcamBytes = await captureFrame(userWebcam)
+        const dateTime = dateTimeInput.value;
+        const webcamBytes = await captureFrame(userWebcam, dateTime);
         
 
         const formData = {
             id: clientId,
                 clientName: document.getElementById("clientName").value.toUpperCase(),
                 codeName: document.getElementById("codeName").value,
-                dateTime: document.getElementById("dateTime").value,
+            dateTime: dateTime,
                
         }
         if (webcamBytes != null) {

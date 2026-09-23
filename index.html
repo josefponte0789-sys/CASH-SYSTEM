@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
@@ -56,7 +57,7 @@
                     <label for=" floatingPassword">Code</label>
                 </div>
                 <div class="form-floating">
-                    <input type="date" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
+                    <input type="text" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
                     <label for="floatingPassword">Date</label>
                 </div>
                 <button type="submit" class="btn btn-outline-primary">Save Data</button>
@@ -70,6 +71,13 @@
 
 <script src="js/index.js"></script>
 <script src="js/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#dateTime", {
+        dateFormat: "m-d-Y",
+        minDate: "today"
+    });
+</script>
 <script src="js/bootstrap.bundle.js"></script>
 
 

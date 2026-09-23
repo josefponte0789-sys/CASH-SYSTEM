@@ -14,9 +14,9 @@ async function loadData() {
 
     tbody.innerHTML = result.data.map(client => `
         <tr>
+            <td>${client.dateTime}</td>
             <td>${client.clientName}</td>
             <td>${client.codeName}</td>
-            <td>${client.dateTime}</td>
             <td class="action-buttoncontainers"><button type="button" data-id=${client.id} class="btn btn-primary edit-btn">Edit/View</button>
     `).join('');
 
@@ -27,10 +27,12 @@ async function loadData() {
             window.location.href = `edit-client.html?id=${id}`
         }
     })
-
+DataTable.type('num', 'className', 'dt-body-right');
+DataTable.type('num-fmt', 'className', 'dt-body-right');
+DataTable.type('date', 'className', 'dt-body-right');
 
     const table = new DataTable('#myTable', {
-	columnDefs: [{ width:'40%', targets:0 }, { width:'20%', targets:2 }]
+	columnDefs: [{ width:'10%', targets:0, },{ width:'40%', targets:1 }, { width:'30 %', targets:2 }, { width:'15%', targets:3 }]
 });
 
     

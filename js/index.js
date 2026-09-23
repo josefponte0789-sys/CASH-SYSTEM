@@ -8,6 +8,7 @@ const dateTimeInput = document.getElementById("dateTime");
 
 
 
+
 async function getWebcam() {
 
     dateTimeInput.addEventListener("change", () => {
@@ -43,7 +44,7 @@ function captureFrame(videoEl) {
     ctx.font = "30px Arial";
     ctx.fontWeight = "bold";
 
-    const x = 30;
+    const x = canvas.width - 180;
     const y = canvas.height - 30;
 
     ctx.strokeStyle = "black";

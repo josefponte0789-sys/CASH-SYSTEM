@@ -46,10 +46,6 @@ body{
     
 }
 
-#myTable thead tr,td{
-    padding: 5px;
-    
-}
 
 th:last-child,
 td:last-child {
@@ -59,11 +55,20 @@ td:last-child {
 
 th{
     padding: 7px;
+    border-right: 1px solid rgb(69, 69, 69);
 }
 
-.action-buttoncontainers{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+tbody td{
+    padding: 10px;
+    border-bottom: 1px solid rgb(208, 208, 208);
+}
+
+.myTable tbody tr{
+    
+}
+
+
+.myTable tbody tr:hover{
+    background-color: rgb(204, 204, 204);
+    transition: all 0.27s ease-in-out;
 }
