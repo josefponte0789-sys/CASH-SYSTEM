@@ -75,6 +75,13 @@ async function loadClient() {
 
 loadClient();
 
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop())
+        stream = null;
+    }
+}
+
 function captureFrame(videoEl) {
      if (!videoEl.srcObject || !videoEl.videoWidth || !videoEl.videoHeight) {
         return Promise.resolve(null);
@@ -119,10 +126,12 @@ editForm.addEventListener("submit", async (event) => {
 
             const result = await window.api.updateForm(formData);
 
-            if (result.success) {
-                console.log("Saved at:", result.path)
-                alert("Data saved successfully!");
-                window.location.reload()
+        if (result.success) {
+            userWebcam.pause();
+            console.log("Saved at:", result.path)
+            alert("Data saved successfully!");
+            stopCamera();
+            window.location.reload()
             } else {
                 console.error(result.error);
                 console.log(formData);

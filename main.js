@@ -5,6 +5,7 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 
 let db;
+app.commandLine.appendSwitch('lang', 'en-US');
 
 const createWindow = () => {
     

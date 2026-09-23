@@ -3,11 +3,16 @@ let stream = null;
 
 const userWebcam = document.getElementById("userWebcam");
 const startCamera = document.getElementById("startCamera");
-
+const videoDate = document.getElementById("videoDate");
+const dateTimeInput = document.getElementById("dateTime");
 
 
 
 async function getWebcam() {
+
+    dateTimeInput.addEventListener("change", () => {
+    videoDate.textContent = dateTimeInput.value;
+});
 
     const constraints = {
         audio: false,
@@ -23,7 +28,6 @@ async function getWebcam() {
         console.error("An error has occurred!: ", error.name, error.message);
         alert("An error has occurred, please refresh the page or restart the camera.")
     }
-
 }
 
 startCamera.addEventListener("click", getWebcam);
@@ -35,6 +39,20 @@ function captureFrame(videoEl) {
     canvas.height = videoEl.videoHeight;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+    ctx.font = "30px Arial";
+    ctx.fontWeight = "bold";
+
+    const x = 30;
+    const y = canvas.height - 30;
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(dateTimeInput.value, x, y);
+
+    ctx.fillStyle = "white";
+    ctx.fillText(dateTimeInput.value, x, y);
+
 
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
@@ -63,25 +81,30 @@ userForm.addEventListener("submit", async (event) => {
         return;
     }
     try {
-        const webcamBytes = await captureFrame(userWebcam)
+        const dateTime = dateTimeInput.value;
+        const webcamBytes = await captureFrame(userWebcam, dateTime);
 
         const formData = {
             clientName: document.getElementById("clientName").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
-            dateTime: document.getElementById("dateTime").value,
+            dateTime: dateTime,
             userWebcam: webcamBytes,
         }
 
         const result = await window.api.saveForm(formData);
+        
 
         if (result.success) {
+            userWebcam.pause();
             console.log("Saved at:", result.path)
-            alert("Data saved successfully!");
+            alert("Data saved successfully! Press 'OK' to proceed.");
             userForm.reset();
             stopCamera();
+            window.location.reload();
         } else {
             console.error(result.error);
-            alert("An error has occurred.");
+            alert("An error has occurred. Page will reload.");
+            window.location.reload();
         }
     } catch (error) {
         alert("An error has occurred. Please reload the page.");

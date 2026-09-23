@@ -41,8 +41,11 @@
     <div class="wrapper">
         <form id="userForm">
             <div class="group-input">
-
-                <video id="userWebcam" class="video-capture-screen" autoplay playsinline></video>
+                <h1>Client Information</h1>
+                <div class="video-container">
+                    <video id="userWebcam" class="video-capture-screen" autoplay playsinline></video>
+                    <div id="videoDate" class="video-date"></div>
+                </div>
                 <button type="button" id="startCamera" class="btn btn-outline-secondary">Start Camera</button>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="clientName" placeholder="Ex. Juan Dela Cruz">
