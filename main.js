@@ -95,18 +95,53 @@ ipcMain.handle('get-client', async (event, id) => {
 
 
 ipcMain.handle('update-form', async (event, formData) => {
-
     try {
-        const stmt = db.prepare(
-            'UPDATE clients set clientName = ?, codeName = ?, dateTime = ?, userWebcam = ? WHERE id = ?'
-        );
-        const info = stmt.run(
-            formData.clientName, formData.codeName, formData.dateTime, formData.userWebcam, formData.id
-        );
-        
-        return { success: info.changes > 0 };
-    } catch (err) {
-        return { success: false, error: err.message };
+        let info;
 
+        if (formData.userWebcam) {
+            const stmt = db.prepare(`
+                UPDATE clients
+                SET clientName = ?,
+                    codeName = ?,
+                    dateTime = ?,
+                    userWebcam = ?
+                WHERE id = ?
+            `);
+
+            info = stmt.run(
+                formData.clientName,
+                formData.codeName,
+                formData.dateTime,
+                Buffer.from(formData.userWebcam),
+                formData.id
+            );
+        } else {
+            const stmt = db.prepare(`
+                UPDATE clients
+                SET clientName = ?,
+                    codeName = ?,
+                    dateTime = ?
+                WHERE id = ?
+            `);
+
+            info = stmt.run(
+                formData.clientName,
+                formData.codeName,
+                formData.dateTime,
+                formData.id
+            );
+        }
+
+        return {
+            success: info.changes > 0
+        };
+
+    } catch (err) {
+        console.error(err);
+
+        return {
+            success: false,
+            error: err.message
+        };
     }
-})
+});

@@ -4,6 +4,7 @@ const videoContainer = document.getElementById("video-container");
 const editForm = document.getElementById("editForm");
 const clientPhoto = document.getElementById("clientPhoto");
 let stream = null;
+let clientId = null;
 
 
 async function retakePhoto() {
@@ -43,6 +44,7 @@ async function loadClient() {
     
 
     const id = params.get("id");
+    clientId = id;
 
     const result = await window.api.getClientId(id);
 
@@ -101,30 +103,32 @@ editForm.addEventListener("submit", async (event) => {
  
     try {
         const webcamBytes = await captureFrame(userWebcam)
-        if (webcamBytes != null) {
-            formData.userWebcam = webcamBytes;
-           
-        }
-        else {
-            const formData = {
+        
+
+        const formData = {
+            id: clientId,
                 clientName: document.getElementById("clientName").value.toUpperCase(),
                 codeName: document.getElementById("codeName").value,
                 dateTime: document.getElementById("dateTime").value,
-                userWebcam: webcamBytes,
-            }
+               
+        }
+        if (webcamBytes != null) {
+            formData.userWebcam = webcamBytes;
+
+        }
 
             const result = await window.api.updateForm(formData);
 
             if (result.success) {
                 console.log("Saved at:", result.path)
                 alert("Data saved successfully!");
-                editForm.reset();
+                window.location.reload()
             } else {
                 console.error(result.error);
                 console.log(formData);
                 alert("An error has occurred.");
             }
-        }
+        
     } catch (error) {
         alert("An error has occurred. Please reload the page.");
         console.error("An error has occurred", error);
