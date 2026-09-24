@@ -50,11 +50,12 @@ h1{
 .wrapper{
     
     margin: 0 auto;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     display: flex;
-    height: 90vh;
-    
+    min-height: 90vh;
+    padding-top: 2rem;
+
     
 
 }

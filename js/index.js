@@ -5,15 +5,42 @@ const userWebcam = document.getElementById("userWebcam");
 const startCamera = document.getElementById("startCamera");
 const videoDate = document.getElementById("videoDate");
 const dateTimeInput = document.getElementById("dateTime");
+const saveDataButton = document.getElementById("saveDataButton")
 
 
+
+
+
+
+
+
+
+function disableSaveDataButton() {
+    saveDataButton.disabled = true;
+    saveDataButton.style.backgroundColor = "#DEDEDE";
+    saveDataButton.style.border = "none";
+    saveDataButton.innerText = "Please start camera first."
+    saveDataButton.style.color = "black";
+}
+
+
+
+disableSaveDataButton();
+function enableSaveDataButton() {
+    saveDataButton.disabled = false;
+    saveDataButton.style.backgroundColor = "";
+    saveDataButton.style.border = "";
+    saveDataButton.innerText = "Save Data"
+    saveDataButton.style.color = "";
+}
 
 
 async function getWebcam() {
 
     dateTimeInput.addEventListener("change", () => {
     videoDate.textContent = dateTimeInput.value;
-});
+    });       
+    disableSaveDataButton();
 
     const constraints = {
         audio: false,
@@ -23,12 +50,17 @@ async function getWebcam() {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         userWebcam.srcObject = stream;
         console.log("it's working.");
-
+        saveDataButton.innerText = "Processing..."
+        setTimeout(() => {
+            enableSaveDataButton();
+        }, 1500)
+        
     }
     catch (error) {
         console.error("An error has occurred!: ", error.name, error.message);
         alert("An error has occurred, please refresh the page or restart the camera.")
     }
+   
 }
 
 startCamera.addEventListener("click", getWebcam);

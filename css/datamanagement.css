@@ -1,0 +1,34 @@
+body {
+    background-color: #1e2124 !important;
+}
+
+.wrapper{
+    width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 50vh;
+    padding-top: 2rem; 
+}
+
+.accordion{
+    width: 100%;
+    padding-top: 2rem; 
+}
+
+.body-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 15px;
+}
+
+
+
+
+
+.date-field{
+    flex:1;
+}

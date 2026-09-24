@@ -9,12 +9,42 @@ const videoDate = document.getElementById("videoDate");
 const dateTimeInput = document.getElementById("dateTime");
 
 
+const saveDataButton = document.getElementById("saveDataButton")
+
+
+
+
+
+
+
+
+
+function disableSaveDataButton() {
+    saveDataButton.disabled = true;
+    saveDataButton.style.backgroundColor = "#DEDEDE";
+    saveDataButton.style.border = "none";
+    saveDataButton.innerText = "Please start camera first."
+    saveDataButton.style.color = "black";
+}
+
+disableSaveDataButton();
+
+
+function enableSaveDataButton() {
+    saveDataButton.disabled = false;
+    saveDataButton.style.backgroundColor = "";
+    saveDataButton.style.border = "";
+    saveDataButton.innerText = "Save Data"
+    saveDataButton.style.color = "";
+}
+
+
 async function retakePhoto() {
 
     dateTimeInput.addEventListener("change", () => {
     videoDate.textContent = dateTimeInput.value;
     });
-    
+    disableSaveDataButton();
     const constraints = {
         audio: false,
         video: true,
@@ -31,6 +61,11 @@ async function retakePhoto() {
             console.error(userWebcam.error);
         }
         console.log("it's working.");
+        saveDataButton.innerText = "Processing..."
+        setTimeout(() => {
+            enableSaveDataButton();
+        }, 1500)
+
 
     }
     catch (error) {
@@ -101,7 +136,7 @@ function captureFrame(videoEl) {
     ctx.font = "30px Arial";
     ctx.fontWeight = "bold";
 
-    const x = 30;
+    const x = canvas.width - 180;
     const y = canvas.height - 30;
 
     ctx.strokeStyle = "black";
