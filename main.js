@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
 const path = require('path')
 const fs = require('fs');
 const Database = require('better-sqlite3');
+const { start } = require('repl');
 
 let db;
 app.commandLine.appendSwitch('lang', 'en-US');
@@ -44,13 +45,13 @@ app.whenReady().then(() => {
     createWindow()
 });
 
-ipcMain.handle('save-form', async (event, formData) => {
+ipcMain.handle('save-form', async (event, formData, dateSelected) => {
 
     try {
         const stmt = db.prepare(
             'INSERT INTO clients (clientName, codeName, dateTime, userWebcam) VALUES (?, ?, ?, ?)'
         );
-        stmt.run(formData.clientName, formData.codeName, formData.dateTime, formData.userWebcam);
+        stmt.run(formData.clientName, formData.codeName, dateSelected, formData.userWebcam);
         
         return { success: true };
     } catch (err) {
@@ -95,7 +96,7 @@ ipcMain.handle('get-client', async (event, id) => {
 })
 
 
-ipcMain.handle('update-form', async (event, formData) => {
+ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
     try {
         let info;
 
@@ -112,7 +113,7 @@ ipcMain.handle('update-form', async (event, formData) => {
             info = stmt.run(
                 formData.clientName,
                 formData.codeName,
-                formData.dateTime,
+                editDateSelected,
                 Buffer.from(formData.userWebcam),
                 formData.id
             );
@@ -128,7 +129,7 @@ ipcMain.handle('update-form', async (event, formData) => {
             info = stmt.run(
                 formData.clientName,
                 formData.codeName,
-                formData.dateTime,
+                editDateSelected,
                 formData.id
             );
         }
@@ -146,3 +147,75 @@ ipcMain.handle('update-form', async (event, formData) => {
         };
     }
 });
+
+ipcMain.handle('export-data', async(event, startDate, endDate)=>{
+
+try{
+    const rows = db.prepare(`SELECT id, clientName, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
+        ORDER BY dateTime ASC`).all(startDate, endDate);
+
+        if (rows.length === 0){
+            return{
+                success: false,
+                message: "No records found for this date range.",
+            }
+        }
+
+        const csv = convertToCSV(rows);
+
+          const saveResult = await dialog.showSaveDialog({
+            title: "Export Records",
+            defaultPath: `records_${startDate}_to_${endDate}.csv`,
+            filters: [
+                {
+                    name: "CSV Files",
+                    extensions: ["csv"]
+                }
+            ]
+        });
+
+        if (saveResult.canceled) {
+            return {
+                success: false,
+                message: "Export cancelled."
+            };
+        }
+
+        fs.writeFileSync(
+            saveResult.filePath,
+            csv,
+            "utf8"
+        );
+
+        return {
+            success: true,
+            count: rows.length,
+            path: saveResult.filePath
+        };
+
+    } catch (error) {
+
+        console.error(error);
+
+        return {
+            success: false,
+            message: error.message
+        };
+    }
+});
+
+
+function convertToCSV(rows){
+    if(rows.length === 0){
+        return "";
+    }
+
+    const headers = Object.keys(rows[0]);
+
+    const csvRows = [
+        headers.join(","),
+        ...rows.map(row => headers.map(header =>`"${String(row[header] ?? "").replace(/"/g, '""')}"`)
+    .join(","))
+    ];
+    return csvRows.join("\n");
+}

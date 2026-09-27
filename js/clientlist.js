@@ -27,12 +27,37 @@ async function loadData() {
             window.location.href = `edit-client.html?id=${id}`
         }
     })
-DataTable.type('num', 'className', 'dt-body-right');
-DataTable.type('num-fmt', 'className', 'dt-body-right');
-DataTable.type('date', 'className', 'dt-body-right');
+DataTable.type('num', 'className', 'dt-body-left');
+DataTable.type('num-fmt', 'className', 'dt-body-left');
+DataTable.type('date', 'className', 'dt-body-left');
 
-    const table = new DataTable('#myTable', {
-	columnDefs: [{ width:'10%', targets:0, },{ width:'40%', targets:1 }, { width:'30 %', targets:2 }, { width:'15%', targets:3 }]
+const table = new DataTable('#myTable', {
+    columnDefs: [
+        {
+            width: '10%',
+            targets: 0,
+            render: function(data, type, row){
+                if (type === 'display'){
+                    const [year, month, day] = data.split('-');
+                    return `${month}-${day}-${year}`;
+                }
+                return data;
+            }
+        },
+        {
+            width: '40%',
+            targets: 1
+        },
+        {
+            width: '30%',
+            targets: 2
+          
+        },
+        {
+            width: '15%',
+            targets: 3
+        }
+    ]
 });
 
     

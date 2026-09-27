@@ -109,6 +109,12 @@ function stopCamera() {
 userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    
+    const dateFormat = document.getElementById("dateTime")._flatpickr;
+
+
+    const dateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d");
+
     if (!stream) {
         alert("Please start the camera first");
         return;
@@ -120,11 +126,11 @@ userForm.addEventListener("submit", async (event) => {
         const formData = {
             clientName: document.getElementById("clientName").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
-            dateTime: dateTime,
+            dateTime: dateSelected,
             userWebcam: webcamBytes,
         }
 
-        const result = await window.api.saveForm(formData);
+        const result = await window.api.saveForm(formData, dateSelected);
         
 
         if (result.success) {

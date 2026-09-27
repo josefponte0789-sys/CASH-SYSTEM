@@ -1,8 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('api', {
-    saveForm: (data) => ipcRenderer.invoke("save-form", data),
+    saveForm: (data, dateSelected) => ipcRenderer.invoke("save-form", data, dateSelected),
     readForm: () => ipcRenderer.invoke("get-data"),
-    updateForm: (data) => ipcRenderer.invoke("update-form", data),
+    updateForm: (data, editDateSelected) => ipcRenderer.invoke("update-form", data, editDateSelected),
     getClientId: (id) => ipcRenderer.invoke("get-client",id),
+    exportData:(startDate, endDate) => ipcRenderer.invoke("export-data", startDate, endDate),
 })

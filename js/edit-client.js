@@ -27,7 +27,6 @@ function disableSaveDataButton() {
     saveDataButton.style.color = "black";
 }
 
-disableSaveDataButton();
 
 
 function enableSaveDataButton() {
@@ -44,7 +43,6 @@ async function retakePhoto() {
     dateTimeInput.addEventListener("change", () => {
     videoDate.textContent = dateTimeInput.value;
     });
-    disableSaveDataButton();
     const constraints = {
         audio: false,
         video: true,
@@ -108,7 +106,15 @@ async function loadClient() {
     console.log("client object:", client);
     document.getElementById("clientName").value = client.clientName;
     document.getElementById("codeName").value = client.codeName;
-    document.getElementById("dateTime").value = client.dateTime;
+  const dateInput = document.getElementById("dateTime");
+    const dateFormat = dateInput._flatpickr
+
+const formattedDate = flatpickr.formatDate(
+    flatpickr.parseDate(client.dateTime, "Y-m-d"),
+    "m-d-Y"
+);
+
+dateInput.value = formattedDate;
 
   
 }
@@ -161,6 +167,12 @@ function captureFrame(videoEl) {
 editForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    const dateFormat = document.getElementById("dateTime")._flatpickr;
+    const editDateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d");
+
+    
+    
+
  
     try {
         const dateTime = dateTimeInput.value;
@@ -171,7 +183,7 @@ editForm.addEventListener("submit", async (event) => {
             id: clientId,
                 clientName: document.getElementById("clientName").value.toUpperCase(),
                 codeName: document.getElementById("codeName").value,
-            dateTime: dateTime,
+            dateTime: editDateSelected,
                
         }
         if (webcamBytes != null) {
@@ -179,7 +191,7 @@ editForm.addEventListener("submit", async (event) => {
 
         }
 
-            const result = await window.api.updateForm(formData);
+            const result = await window.api.updateForm(formData, editDateSelected);
 
         if (result.success) {
             userWebcam.pause();
