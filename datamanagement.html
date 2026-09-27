@@ -42,7 +42,7 @@
         <div class="accordion" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button exportcsvfile" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
                         aria-controls="panelsStayOpen-collapseOne">
                         Download to .CSV file
@@ -70,7 +70,7 @@
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed exportxlsxpdffile" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseTwo">
                         Export to an Excel Spreadsheet (.xlsx) / PDF File (.pdf)
@@ -78,39 +78,38 @@
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                     <div class="accordion-body">
-                        <strong>This is the second item’s accordion body.</strong> It is hidden by default, until the
-                        collapse
-                        plugin adds the appropriate classes that we use to style each element. These classes control the
-                        overall
-                        appearance, as well as the showing and hiding via CSS transitions. You can modify any of this
-                        with
-                        custom CSS or overriding our default variables. It’s also worth noting that just about any HTML
-                        can
-                        go
-                        within the <code>.accordion-body</code>, though the transition does limit overflow.
+                        <strong>Exports selected to .XLSX sheet / .PDF file that contains user data and images.</strong>
+                       <code> Work in progess section.</code>
+                       <div class="body-content">
+                                <div class="form-floating date-field">
+                                    <input type="text" class="form-control" id="dateRangeInputXLSXPDF"
+                                        placeholder="MM/DD/YYYY" disabled>
+                                    <label for="floatingPassword">Date</label>
+                                </div>
+
+                                <button type="button" class="btn btn-primary" id="exportToXLSXBtn" disabled>Export to .XLSX</button>
+                                <button type="button" class="btn btn-danger" id="exportToXLSXBtn" disabled>Export to .PDF</button>
+                            </div>
                     </div>
                 </div>
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed exportdatabase" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseThree">
-                        Download / Backup the database (.db)
+                        Download / Backup database (.db)
                     </button>
                 </h2>
                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
                     <div class="accordion-body">
-                        <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the
-                        collapse
-                        plugin adds the appropriate classes that we use to style each element. These classes control the
-                        overall
-                        appearance, as well as the showing and hiding via CSS transitions. You can modify any of this
-                        with
-                        custom CSS or overriding our default variables. It’s also worth noting that just about any HTML
-                        can
-                        go
-                        within the <code>.accordion-body</code>, though the transition does limit overflow.
+                          <strong>Exports the existing database based on the selected file destination.</strong>
+                          <code>This contains the <strong>WHOLE DATABASE DATA.</strong></code>
+                       <div class="body-content ">
+                               
+
+                                <button type="button" class="btn btn-primary" id="exportDatabase">Export database (.db)</button>
+                            </div>
                     </div>
                 </div>
             </div>

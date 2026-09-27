@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld('api', {
     updateForm: (data, editDateSelected) => ipcRenderer.invoke("update-form", data, editDateSelected),
     getClientId: (id) => ipcRenderer.invoke("get-client",id),
     exportData:(startDate, endDate) => ipcRenderer.invoke("export-data", startDate, endDate),
+    downloadDatabase: () => ipcRenderer.invoke("download-db"),
 })

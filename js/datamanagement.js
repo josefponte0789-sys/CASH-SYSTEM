@@ -34,3 +34,19 @@ if (result.success){
 }
 
 });
+
+
+document.getElementById("exportDatabase").addEventListener("click", async ()=>{
+    const result = await window.api.downloadDatabase();
+
+    if(result.success){
+        console.log("Save to:", result.path);
+        alert('Database downloaded.');
+    }
+    else{
+          console.log("An error has occurred", result.error);
+        alert('Download failed, please reload the page and try again.', result.error);
+    }
+
+
+})

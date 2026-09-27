@@ -25,9 +25,20 @@ body {
     padding-top: 15px;
 }
 
+.exportcsvfile{
+    background-color: #0d6efd;
+    color: white;
+}
 
+.exportxlsxpdffile{
+    background-color: #dc3545;
+    color: white;
+}
 
-
+.exportdatabase{
+    background-color: #343a40;
+    color: white;
+}
 
 .date-field{
     flex:1;

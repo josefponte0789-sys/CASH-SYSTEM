@@ -219,3 +219,24 @@ function convertToCSV(rows){
     ];
     return csvRows.join("\n");
 }
+
+
+ipcMain.handle('download-db', async (event) => {
+    const dbPath  = path.join(app.getPath('userData'), 'clients.db');
+    const {canceled, filePath} = await dialog.showSaveDialog({
+        title: 'Save Database File',
+        defaultPath: path.join(app.getPath('desktop'),'clients.db'),
+        filters: [{name:'Database Files', extensions:['db']}]
+    });
+
+    if (canceled || !filePath) return {success: false};
+
+    try{
+        fs.copyFileSync(dbPath, filePath);
+        return{success: true, path:filePath};
+    }
+    catch(err){
+        return{success: false, error: err.message};
+    }
+
+    });
