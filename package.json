@@ -1,20 +1,26 @@
 {
-  "name": "cres",
+  "name": "CASH",
   "version": "1.0.0",
   "description": "",
-  "main": "main",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
   },
-  "author": "j. ponte",
+  "author": "J.R. Ponte",
   "license": "ISC",
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
-    "electron": "^44.3.0"
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "flatpickr": "^4.6.13"
-  }
+  },
+  "build": {
+  "appId": "com.cash.app"
+}
 }

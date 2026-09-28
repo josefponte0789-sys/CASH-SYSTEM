@@ -229,7 +229,7 @@ ipcMain.handle('download-db', async (event) => {
         filters: [{name:'Database Files', extensions:['db']}]
     });
 
-    if (canceled || !filePath) return {success: false};
+    if (canceled || !filePath) return {success: false, message: "Download cancelled."};
 
     try{
         fs.copyFileSync(dbPath, filePath);
@@ -239,4 +239,14 @@ ipcMain.handle('download-db', async (event) => {
         return{success: false, error: err.message};
     }
 
-    });
+});
+    
+ipcMain.handle('delete-entry', async (event, id) => {
+    try {
+        const stmt = db.prepare(`DELETE FROM clients WHERE id = ?`);
+        stmt.run(id);
+        return { success: true }
+    } catch (err) {
+        return { success: false, error: err.message };
+    }
+});

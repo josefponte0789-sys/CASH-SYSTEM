@@ -18,13 +18,30 @@ async function loadData() {
             <td>${client.clientName}</td>
             <td>${client.codeName}</td>
             <td class="action-buttoncontainers"><button type="button" data-id=${client.id} class="btn btn-primary edit-btn">Edit/View</button>
+            <button type="submit" data-id=${client.id} id="deleteEntry" class="btn btn-danger delete-btn" onclick="return confirm ('DELETE this user data?')">Delete Entry</button> </td>
     `).join('');
 
 
-    document.getElementById("tableDataOutput").addEventListener("click", (e) => {
+    document.getElementById("tableDataOutput").addEventListener("click", async(e) => {
         if (e.target.classList.contains("edit-btn")) {
             const id = e.target.dataset.id;
             window.location.href = `edit-client.html?id=${id}`
+        }
+        else if (e.target.classList.contains("delete-btn")) {
+            const id = e.target.dataset.id;
+             const result = await window.api.deleteEntry(id);
+
+            if(result.success){
+                console.log("Save to:", result.path);
+                alert('Delete successful.');
+                
+            }
+            else{
+                console.log("An error has occurred", result.error);
+                alert('Delete failed, please reload the page and try again.', result.error);
+            }
+
+
         }
     })
 DataTable.type('num', 'className', 'dt-body-left');
