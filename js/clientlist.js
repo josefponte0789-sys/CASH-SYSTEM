@@ -34,6 +34,7 @@ async function loadData() {
             if(result.success){
                 console.log("Save to:", result.path);
                 alert('Delete successful.');
+                window.location.reload()
                 
             }
             else{
