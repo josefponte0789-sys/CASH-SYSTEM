@@ -39,7 +39,6 @@ function enableSaveDataButton() {
 
 
 async function retakePhoto() {
-
     dateTimeInput.addEventListener("change", () => {
     videoDate.textContent = dateTimeInput.value;
     });
@@ -58,12 +57,7 @@ async function retakePhoto() {
             alert("An error has occurred. Please reload the page.")
             console.error(userWebcam.error);
         }
-        console.log("it's working.");
-        saveDataButton.innerText = "Processing..."
-        setTimeout(() => {
-            enableSaveDataButton();
-        }, 1500)
-
+     
 
     }
     catch (error) {
@@ -106,15 +100,13 @@ async function loadClient() {
     console.log("client object:", client);
     document.getElementById("clientName").value = client.clientName;
     document.getElementById("codeName").value = client.codeName;
-  const dateInput = document.getElementById("dateTime");
-    const dateFormat = dateInput._flatpickr
+    const dateInput = document.getElementById("dateTime");
+    const dateFormat = dateInput._flatpickr;
 
-const formattedDate = flatpickr.formatDate(
-    flatpickr.parseDate(client.dateTime, "Y-m-d"),
-    "m-d-Y"
-);
 
-dateInput.value = formattedDate;
+    dateFormat.setDate(client.dateTime, false, "Y-m-d");
+
+
 
   
 }
@@ -170,10 +162,7 @@ editForm.addEventListener("submit", async (event) => {
     const dateFormat = document.getElementById("dateTime")._flatpickr;
     const editDateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d");
 
-    
-    
 
- 
     try {
         const dateTime = dateTimeInput.value;
         const webcamBytes = await captureFrame(userWebcam, dateTime);
@@ -181,8 +170,8 @@ editForm.addEventListener("submit", async (event) => {
 
         const formData = {
             id: clientId,
-                clientName: document.getElementById("clientName").value.toUpperCase(),
-                codeName: document.getElementById("codeName").value,
+            clientName: document.getElementById("clientName").value.toUpperCase(),
+            codeName: document.getElementById("codeName").value,
             dateTime: editDateSelected,
                
         }
@@ -191,7 +180,7 @@ editForm.addEventListener("submit", async (event) => {
 
         }
 
-            const result = await window.api.updateForm(formData, editDateSelected);
+        const result = await window.api.updateForm(formData, editDateSelected);
 
         if (result.success) {
             userWebcam.pause();

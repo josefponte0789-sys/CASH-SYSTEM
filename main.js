@@ -256,12 +256,19 @@ ipcMain.handle('delete-entry', async (event, id) => {
 ipcMain.handle('export-images', async (event, startDate, endDate) => {
   try {
     const rows = db.prepare(`
-      SELECT id, userWebcam, dateTime
+      SELECT id, userWebcam, dateTime, clientName
       FROM clients
       WHERE date(dateTime) BETWEEN date(?) AND date(?)
         AND userWebcam IS NOT NULL
       ORDER BY dateTime ASC
     `).all(startDate, endDate);
+
+     if (rows.length === 0){
+            return{
+                success: false,
+                message: "No records found for this date range.",
+            }
+        }
 
     const win = BrowserWindow.fromWebContents(event.sender);
     const { canceled, filePaths } = await dialog.showOpenDialog(win, {
@@ -279,7 +286,6 @@ ipcMain.handle('export-images', async (event, startDate, endDate) => {
       if (Buffer.isBuffer(row.userWebcam)) {
         buffer = row.userWebcam;
       } else if (typeof row.userWebcam === 'string') {
-        // handles "data:image/jpeg;base64,...." or raw base64
         const match = row.userWebcam.match(/^data:image\/(\w+);base64,(.+)$/);
         if (match) {
           ext = '.' + (match[1] === 'jpeg' ? 'jpg' : match[1]);
@@ -292,7 +298,8 @@ ipcMain.handle('export-images', async (event, startDate, endDate) => {
       }
 
       const datePart = String(row.dateTime).slice(0, 10);
-      const outPath = path.join(outputDir, `${row.id}_${datePart}${ext}`);
+      const personnelName = String(row.clientName);
+      const outPath = path.join(outputDir, `${count}_${datePart}_${personnelName}${ext}`);
       await fs.promises.writeFile(outPath, buffer);
       count++;
     }
@@ -301,4 +308,72 @@ ipcMain.handle('export-images', async (event, startDate, endDate) => {
   } catch (err) {
     return { success: false, error: err.message };
   }
+});
+
+
+ipcMain.handle('import-db', async (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+        title: 'Import Database File',
+        properties: ['openFile'],
+        filters: [{ name: 'Database Files', extensions: ['db', 'sqlite', 'sqlite3'] }]
+    });
+
+    if (canceled || !filePaths[0]) return { success: false, canceled: true };
+
+    const importPath = filePaths[0];
+    let attached = false;
+
+    try {
+        await db.backup(path.join(app.getPath('userData'), `backup-${Date.now()}.db`));
+
+        db.prepare('ATTACH DATABASE ? AS imported').run(importPath);
+        attached = true;
+
+        const hasTable = db.prepare(
+            `SELECT 1 FROM imported.sqlite_master WHERE type = 'table' AND name = 'clients'`
+        ).get();
+        if (!hasTable) {
+            return { success: false, error: 'This file has no "clients" table.' };
+        }
+
+        const srcCols = db.pragma('imported.table_info(clients)').map(c => c.name);
+        const required = ['clientName', 'codeName', 'dateTime'];
+        const missing = required.filter(c => !srcCols.includes(c));
+        if (missing.length) {
+            return { success: false, error: `Missing columns: ${missing.join(', ')}` };
+        }
+
+        const webcamExpr = srcCols.includes('userWebcam') ? 's.userWebcam' : 'NULL';
+
+        const total = db.prepare('SELECT COUNT(*) AS n FROM imported.clients').get().n;
+
+        const info = db.transaction(() => {
+            return db.prepare(`
+                INSERT INTO main.clients (clientName, codeName, dateTime, userWebcam)
+                SELECT s.clientName, s.codeName, s.dateTime, ${webcamExpr}
+                FROM imported.clients s
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM main.clients c
+                    WHERE c.clientName = s.clientName
+                      AND c.codeName   = s.codeName
+                      AND c.dateTime   = s.dateTime
+                )
+                ORDER BY s.id
+            `).run();
+        })();
+
+        return {
+            success: true,
+            added: info.changes,
+            skipped: total - info.changes
+        };
+    } catch (err) {
+        console.error(err);
+        return { success: false, error: err.message };
+    } finally {
+        if (attached) {
+            try { db.exec('DETACH DATABASE imported'); } catch {}
+        }
+    }
 });

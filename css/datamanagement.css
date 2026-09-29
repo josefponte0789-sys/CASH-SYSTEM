@@ -47,3 +47,13 @@ body {
 .exporttoimage{
     background-color: #0dcaf0;
 }
+
+.database-buttons{
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
+}
+.database-buttons button{
+    width: default;
+}
