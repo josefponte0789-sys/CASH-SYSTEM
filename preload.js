@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('api', {
     exportData:(startDate, endDate) => ipcRenderer.invoke("export-data", startDate, endDate),
     downloadDatabase: () => ipcRenderer.invoke("download-db"),
     deleteEntry: (id) => ipcRenderer.invoke("delete-entry", id),
+    exportImages:(startDate, endDate) => ipcRenderer.invoke("export-images", startDate, endDate),
 })

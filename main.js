@@ -4,6 +4,7 @@ const path = require('path')
 const fs = require('fs');
 const Database = require('better-sqlite3');
 const { start } = require('repl');
+const { error } = require('console');
 
 let db;
 app.commandLine.appendSwitch('lang', 'en-US');
@@ -249,4 +250,55 @@ ipcMain.handle('delete-entry', async (event, id) => {
     } catch (err) {
         return { success: false, error: err.message };
     }
+});
+
+
+ipcMain.handle('export-images', async (event, startDate, endDate) => {
+  try {
+    const rows = db.prepare(`
+      SELECT id, userWebcam, dateTime
+      FROM clients
+      WHERE date(dateTime) BETWEEN date(?) AND date(?)
+        AND userWebcam IS NOT NULL
+      ORDER BY dateTime ASC
+    `).all(startDate, endDate);
+
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+      properties: ['openDirectory', 'createDirectory']
+    });
+    if (canceled || !filePaths[0]) return { success: false, canceled: true };
+
+    const outputDir = filePaths[0];
+    let count = 0;
+
+    for (const row of rows) {
+      let buffer;
+      let ext = '.png';
+
+      if (Buffer.isBuffer(row.userWebcam)) {
+        buffer = row.userWebcam;
+      } else if (typeof row.userWebcam === 'string') {
+        // handles "data:image/jpeg;base64,...." or raw base64
+        const match = row.userWebcam.match(/^data:image\/(\w+);base64,(.+)$/);
+        if (match) {
+          ext = '.' + (match[1] === 'jpeg' ? 'jpg' : match[1]);
+          buffer = Buffer.from(match[2], 'base64');
+        } else {
+          buffer = Buffer.from(row.userWebcam, 'base64');
+        }
+      } else {
+        continue;
+      }
+
+      const datePart = String(row.dateTime).slice(0, 10);
+      const outPath = path.join(outputDir, `${row.id}_${datePart}${ext}`);
+      await fs.promises.writeFile(outPath, buffer);
+      count++;
+    }
+
+    return { success: true, count };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 });

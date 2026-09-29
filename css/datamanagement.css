@@ -43,3 +43,7 @@ body {
 .date-field{
     flex:1;
 }
+
+.exporttoimage{
+    background-color: #0dcaf0;
+}

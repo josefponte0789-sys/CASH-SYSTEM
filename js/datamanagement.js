@@ -1,8 +1,3 @@
-flatpickr("#dateRangeInput", {
-            mode: "range",
-            dateFormat: "m-d-Y",
- });
-
 
 
 document.getElementById("exportBtn").addEventListener("click", async()=>{
@@ -48,5 +43,30 @@ document.getElementById("exportDatabase").addEventListener("click", async ()=>{
         alert('Download failed, please reload the page and try again.', result.error);
     }
 
+
+})
+
+document.getElementById("exportImages").addEventListener("click", async() => {
+
+const imageDates = document.getElementById("dateRangeInputImages")._flatpickr.selectedDates;
+
+
+if  (imageDates.length !== 2){
+    alert("Please select a start and end date.");
+    return;
+}
+
+const startDate = flatpickr.formatDate(imageDates[0], "Y-m-d");
+const endDate = flatpickr.formatDate(imageDates[1], "Y-m-d");
+
+
+const result = await window.api.exportImages(startDate, endDate);
+
+if (result.success) {
+  alert(`Exported ${result.count} image(s).`);
+} else if (!result.canceled) {
+  console.error(result.error);
+  alert(`Export failed: ${result.error}`);
+}
 
 })

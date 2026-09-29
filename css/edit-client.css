@@ -2,12 +2,55 @@ body {
     background-color: #1e2124 !important;
 }
 
+@media screen and (max-width: 1366px) {
+    .wrapper {
+        max-width: 550px;
+        padding: 0px;
+        margin-top: 0.2in;
+    }
+
+    .group-input h1 {
+        font-size: 24px;
+    }
+
+    .video-container {
+        width: 100%;
+    }
+
+    .video-capture-screen {
+        width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: cover;
+    }
+
+    .client-photo{
+    margin-bottom: 15px;
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    object-fit: cover;
+    }
+
+    .form-floating {
+        margin-bottom: 12px;
+    }
+
+    .small-container {
+        gap: 10px;
+    }
+
+    .wrapper .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
 .wrapper{
     display: flex;
     margin: 0 auto;
     align-items: flex-start;
     justify-content: center;
-    margin-top: 0.5in;
+    margin-top: 0.3in;
     text-align: center;
     
    

@@ -73,7 +73,8 @@
                     <button class="accordion-button collapsed exportxlsxpdffile" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseTwo">
-                        Export to an Excel Spreadsheet (.xlsx) / PDF File (.pdf)
+                        <strong> (WORK IN
+                            PROGRESS)</strong> Export to an Excel Spreadsheet (.xlsx) / PDF File (.pdf)
                     </button>
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
@@ -87,7 +88,7 @@
                                 <label for="floatingPassword">Date</label>
                             </div>
 
-                            <button type="button" class="btn btn-primary" id="exportToXLSXBtn" disabled>Export to
+                            <button type="button" class="btn btn-success" id="exportToXLSXBtn" disabled>Export to
                                 .XLSX</button>
                             <button type="button" class="btn btn-danger" id="exportToXLSXBtn" disabled>Export to
                                 .PDF</button>
@@ -97,20 +98,45 @@
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed exportdatabase" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed exporttoimage" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseThree">
-                        Download / Backup database (.db)
+                        Export to image (.png)
                     </button>
                 </h2>
                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Exports client images in the database to .png files based on the month range
+                            selected.</strong>
+
+                        <div class="body-content ">
+                            <div class="form-floating date-field">
+                                <input type="text" class="form-control" id="dateRangeInputImages"
+                                    placeholder="MM/DD/YYYY">
+                                <label for="floatingPassword">Date</label>
+                            </div>
+
+                            <button type="button" class="btn btn-info" id="exportImages">Export images</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed exportdatabase" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseFour">
+                        Backup database (.db)
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
                     <div class="accordion-body">
                         <strong>Exports the existing database based on the selected file destination.</strong>
                         <code>This contains the <strong>WHOLE DATABASE DATA.</strong></code>
                         <div class="body-content ">
 
 
-                            <button type="button" class="btn btn-primary" id="exportDatabase">Export database
+                            <button type="button" class="btn btn-secondary" id="exportDatabase">Export database
                                 (.db)</button>
                         </div>
                     </div>
@@ -121,10 +147,21 @@
     </div>
 
 
-
+    <script src="js/datamanagement.js"></script>
     <script src="js/bootstrap.bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="js/datamanagement.js"></script>
+    <script>flatpickr("#dateRangeInput", {
+            mode: "range",
+            dateFormat: "m-d-Y",
+        });
+
+        flatpickr("#dateRangeInputImages", {
+            mode: "range",
+            dateFormat: "m-d-Y",
+        });
+
+    </script>
+
 
 </body>
 
