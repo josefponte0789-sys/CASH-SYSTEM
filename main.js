@@ -152,7 +152,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 ipcMain.handle('export-data', async(event, startDate, endDate)=>{
 
 try{
-    const rows = db.prepare(`SELECT id, clientName, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
+    const rows = db.prepare(`SELECT clientName, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
         ORDER BY dateTime ASC`).all(startDate, endDate);
 
         if (rows.length === 0){
@@ -271,8 +271,10 @@ ipcMain.handle('export-images', async (event, startDate, endDate) => {
         }
 
     const win = BrowserWindow.fromWebContents(event.sender);
-    const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-      properties: ['openDirectory', 'createDirectory']
+      const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+        title: "Export images",
+        properties: ['openDirectory', 'createDirectory'],
+        defaultPath:path.join(app.getPath("pictures"))
     });
     if (canceled || !filePaths[0]) return { success: false, canceled: true };
 
