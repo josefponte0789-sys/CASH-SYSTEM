@@ -60,7 +60,6 @@ document.getElementById("exportDatabase").addEventListener("click", async () => 
 })
 
 document.getElementById("exportImages").addEventListener("click", async () => {
-
     const imageDates = document.getElementById("dateRangeInputImages")._flatpickr.selectedDates;
 
 
@@ -102,3 +101,25 @@ document.getElementById("importDatabase").addEventListener("click", async () =>{
 
     }
 })
+
+
+document.getElementById("exportToPDFBtn").addEventListener("click", async () =>{
+
+    const dates = document.getElementById("dateRangeInputPDF")._flatpickr.selectedDates;
+
+    const startDate = flatpickr.formatDate(dates[0], "Y-m-d",);
+    const endDate = flatpickr.formatDate(dates[1], "Y-m-d");
+     try {
+        const res = await window.api.exportPdf(startDate, endDate);
+        if (res.success) alert(`Exported ${res.count} records to ${res.path}`);
+        else alert(res.message);
+
+    }
+    catch (err) {
+        console.error("An error has occurred:", err.message);
+        alert('Exporting failed. Please reload the page.', err.message);
+
+    }
+})
+
+

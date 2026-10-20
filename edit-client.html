@@ -55,6 +55,10 @@
                         Client</label>
                 </div>
                 <div class="form-floating">
+                    <input type="text" class="form-control" id="authorizedPersonnel" placeholder="Ex. Juan Dela Cruz">
+                    <label for="floatingInput" name="authorizedPersonnel">Authorized Personnel (Optional)</label>
+                </div>
+                <div class="form-floating">
                     <input type="number" class="form-control" id="codeName" placeholder="Ex. 1234567">
                     <label for=" floatingPassword" name="codeName">Code</label>
                 </div>
@@ -76,7 +80,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         flatpickr("#dateTime", {
-            dateFormat: "m-d-Y",
+            enableTime : true,
+            dateFormat: "m-d-Y h:i K",
         });
     </script>
 

@@ -12,8 +12,8 @@ app.commandLine.appendSwitch('lang', 'en-US');
 const createWindow = () => {
     
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1366,
+        height: 768,
         webPreferences:{
             preload: path.join(__dirname, 'preload.js')
         }
@@ -34,6 +34,7 @@ app.whenReady().then(() => {
         CREATE TABLE IF NOT EXISTS clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         clientName TEXT NOT NULL,
+        authorizedPersonnel TEXT NOT NULL,
         codeName TEXT NOT NULL,
         dateTime TEXT NOT NULL,
         userWebcam BLOB
@@ -50,9 +51,9 @@ ipcMain.handle('save-form', async (event, formData, dateSelected) => {
 
     try {
         const stmt = db.prepare(
-            'INSERT INTO clients (clientName, codeName, dateTime, userWebcam) VALUES (?, ?, ?, ?)'
+            'INSERT INTO clients (clientName, authorizedPersonnel, codeName, dateTime, userWebcam) VALUES (?, ?, ?, ?, ?)'
         );
-        stmt.run(formData.clientName, formData.codeName, dateSelected, formData.userWebcam);
+        stmt.run(formData.clientName, formData.authorizedPersonnel, formData.codeName, dateSelected, formData.userWebcam);
         
         return { success: true };
     } catch (err) {
@@ -105,6 +106,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
             const stmt = db.prepare(`
                 UPDATE clients
                 SET clientName = ?,
+                    authorizedPersonnel = ?,
                     codeName = ?,
                     dateTime = ?,
                     userWebcam = ?
@@ -113,6 +115,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 
             info = stmt.run(
                 formData.clientName,
+                formData.authorizedPersonnel,
                 formData.codeName,
                 editDateSelected,
                 Buffer.from(formData.userWebcam),
@@ -122,6 +125,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
             const stmt = db.prepare(`
                 UPDATE clients
                 SET clientName = ?,
+                authorizedPersonnel = ?,
                     codeName = ?,
                     dateTime = ?
                 WHERE id = ?
@@ -129,6 +133,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 
             info = stmt.run(
                 formData.clientName,
+                formData.authorizedPersonnel,
                 formData.codeName,
                 editDateSelected,
                 formData.id
@@ -152,7 +157,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 ipcMain.handle('export-data', async(event, startDate, endDate)=>{
 
 try{
-    const rows = db.prepare(`SELECT clientName, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
+    const rows = db.prepare(`SELECT clientName, authorizedPersonnel, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
         ORDER BY dateTime ASC`).all(startDate, endDate);
 
         if (rows.length === 0){
@@ -256,7 +261,7 @@ ipcMain.handle('delete-entry', async (event, id) => {
 ipcMain.handle('export-images', async (event, startDate, endDate) => {
   try {
     const rows = db.prepare(`
-      SELECT id, userWebcam, dateTime, clientName
+      SELECT id, userWebcam, dateTime, clientName, authorizedPersonnel
       FROM clients
       WHERE date(dateTime) BETWEEN date(?) AND date(?)
         AND userWebcam IS NOT NULL
@@ -358,6 +363,7 @@ ipcMain.handle('import-db', async (event) => {
                 WHERE NOT EXISTS (
                     SELECT 1 FROM main.clients c
                     WHERE c.clientName = s.clientName
+                      AND c.authorizedPersonnel = s.authorizedPersonnel
                       AND c.codeName   = s.codeName
                       AND c.dateTime   = s.dateTime
                 )
@@ -378,4 +384,118 @@ ipcMain.handle('import-db', async (event) => {
             try { db.exec('DETACH DATABASE imported'); } catch {}
         }
     }
+});
+
+
+
+/// JUST A TEST FROM CLAUDE FOR EXPORT-PDF CUZ IDK HOW TO MAKE IT:
+
+const os = require('os');
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function blobToDataUri(buf) {
+  if (!buf || !buf.length) return '';
+  // Detect the real image type from the first bytes
+  let mime = 'image/jpeg';
+  if (buf[0] === 0x89 && buf[1] === 0x50) mime = 'image/png';
+  else if (buf[0] === 0x52 && buf[1] === 0x49) mime = 'image/webp';
+  return `data:${mime};base64,${buf.toString('base64')}`;
+}
+
+ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
+  let win;
+  let tmp;
+  try {
+    const rows = db.prepare(`
+      SELECT clientName, authorizedPersonnel, codeName, dateTime, userWebcam
+      FROM clients
+      WHERE date(dateTime) BETWEEN date(?) AND date(?)
+      ORDER BY dateTime ASC
+    `).all(startDate, endDate);
+
+    if (rows.length === 0) {
+      return { success: false, message: 'No records found for this date range.' };
+    }
+
+    const saveResult = await dialog.showSaveDialog({
+      title: 'Export Records',
+      defaultPath: `records_${startDate}_to_${endDate}.pdf`,
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    });
+    if (saveResult.canceled || !saveResult.filePath) {
+      return { success: false, message: 'Export cancelled.' };
+    }
+
+    const cards = rows.map(r => {
+      const src = blobToDataUri(r.userWebcam);
+      return `
+        <div class="client">
+          ${src ? `<img src="${src}">` : `<div class="noimg">No image</div>`}
+          <h2>${esc(r.clientName)}</h2>
+          <p><b>Authorized personnel:</b> ${esc(r.authorizedPersonnel)}</p>
+          <p><b>Code name:</b> ${esc(r.codeName)}</p>
+          <p><b>Date/time:</b> ${esc(r.dateTime)}</p>
+        </div>`;
+    }).join('');
+
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+     body { font-family: Arial, sans-serif; margin: 0; color: #222; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.client {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  break-inside: avoid;
+}
+
+.client img, .noimg {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+}
+.noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
+  color: #888;
+  font-size: 12px;
+}
+
+h2 { margin: 8px 0 4px; font-size: 14px; }
+p { margin: 2px 0; font-size: 11px; color: #444; word-break: break-word; }
+    </style></head><body><div class="grid">${cards}</div></body></html>`;
+
+    // Temp file avoids data: URL size limits when there are many images
+    tmp = path.join(os.tmpdir(), `export-${Date.now()}.html`);
+    fs.writeFileSync(tmp, html, 'utf8');
+
+    win = new BrowserWindow({ show: false });
+    await win.loadFile(tmp);
+    const pdf = await win.webContents.printToPDF({
+      pageSize: 'A4',
+      printBackground: true,
+      margins: { marginType: 'default' },
+    });
+
+    fs.writeFileSync(saveResult.filePath, pdf);
+
+    return { success: true, count: rows.length, path: saveResult.filePath };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: error.message };
+  } finally {
+    if (win && !win.isDestroyed()) win.destroy();
+    if (tmp && fs.existsSync(tmp)) fs.unlinkSync(tmp);
+  }
 });

@@ -99,6 +99,7 @@ async function loadClient() {
     }
     console.log("client object:", client);
     document.getElementById("clientName").value = client.clientName;
+    document.getElementById("authorizedPersonnel").value = client.authorizedPersonnel;
     document.getElementById("codeName").value = client.codeName;
     const dateInput = document.getElementById("dateTime");
     const dateFormat = dateInput._flatpickr;
@@ -134,7 +135,7 @@ function captureFrame(videoEl) {
     ctx.font = "30px Arial";
     ctx.fontWeight = "bold";
 
-    const x = canvas.width - 180;
+    const x = canvas.width - 300;
     const y = canvas.height - 30;
 
     ctx.strokeStyle = "black";
@@ -171,6 +172,7 @@ editForm.addEventListener("submit", async (event) => {
         const formData = {
             id: clientId,
             clientName: document.getElementById("clientName").value.toUpperCase(),
+            authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
             dateTime: editDateSelected,
                

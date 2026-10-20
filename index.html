@@ -56,10 +56,14 @@
                     <input type="text" class="form-control" id="clientName" placeholder="Ex. Juan Dela Cruz">
                     <label for="floatingInput">Name of Client</label>
                 </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="authorizedPersonnel" placeholder="Ex. Juan Dela Cruz">
+                    <label for="floatingInput" name="authorizedPersonnel">Authorized Personnel (Optional)</label>
+                </div>
                 <div class="small-container">
                     <div class="form-floating">
                         <input type="number" class="form-control" id="codeName" placeholder="Ex. 1234567">
-                        <label for=" floatingPassword">Code</label>
+                        <label for=" floatingPassword">Bank No.</label>
                     </div>
                     <div class="form-floating">
                         <input type="text" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
@@ -81,7 +85,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     flatpickr("#dateTime", {
-        dateFormat: "m-d-Y",
+        enableTime: true,
+        dateFormat: "m-d-Y h:i K",
     });
 </script>
 <script src="js/bootstrap.bundle.js"></script>

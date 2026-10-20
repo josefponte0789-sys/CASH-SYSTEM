@@ -24,13 +24,12 @@ body {
         object-fit: cover;
     }
 
-    .client-photo{
-    margin-bottom: 15px;
+    #clientPhoto {
     width: 100%;
     height: auto;
-    max-height: 350px;
-    object-fit: cover;
-    }
+    max-height: none;
+    object-fit: contain;
+}
 
     .form-floating {
         margin-bottom: 12px;

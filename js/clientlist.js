@@ -16,6 +16,7 @@ async function loadData() {
         <tr>
             <td>${client.dateTime}</td>
             <td>${client.clientName}</td>
+            <td>${client.authorizedPersonnel ? client.authorizedPersonnel: 'N/A'}</td>
             <td>${client.codeName}</td>
             <td class="action-buttoncontainers"><button type="button" data-id=${client.id} class="btn btn-primary edit-btn">Edit/View</button>
             <button type="submit" data-id=${client.id} id="deleteEntry" class="btn btn-danger delete-btn" onclick="return confirm ('DELETE this user data?')">Delete Entry</button> </td>
@@ -63,17 +64,21 @@ const table = new DataTable('#myTable', {
             }
         },
         {
-            width: '40%',
+            width: '25%',
             targets: 1
         },
         {
-            width: '30%',
+            width: '25%',
             targets: 2
           
         },
         {
             width: '15%',
             targets: 3
+        },
+        {
+            width: '20%',
+            targets: 4
         }
     ]
 });

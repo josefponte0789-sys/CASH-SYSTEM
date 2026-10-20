@@ -76,7 +76,7 @@ function captureFrame(videoEl) {
     ctx.font = "30px Arial";
     ctx.fontWeight = "bold";
 
-    const x = canvas.width - 180;
+    const x = canvas.width - 300;
     const y = canvas.height - 30;
 
     ctx.strokeStyle = "black";
@@ -125,6 +125,7 @@ userForm.addEventListener("submit", async (event) => {
 
         const formData = {
             clientName: document.getElementById("clientName").value.toUpperCase(),
+            authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
             dateTime: dateSelected,
             userWebcam: webcamBytes,

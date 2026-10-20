@@ -84,25 +84,23 @@
                             data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                             aria-controls="panelsStayOpen-collapseTwo">
                             <strong> (WORK IN
-                                PROGRESS)</strong> Export to an Excel
-                            Spreadsheet (.xlsx) / PDF File (.pdf)
+                                PROGRESS)</strong> Export to a PDF File (.pdf)
                         </button>
                     </h2>
                     <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                         <div class="accordion-body">
-                            <strong>Exports selected to .XLSX sheet / .PDF file
+                            <strong>Exports selected to .PDF file
                                 that contains user data and images.</strong>
                             <code> Work in progess section.</code>
                             <div class="body-content">
                                 <div class="form-floating date-field">
-                                    <input type="text" class="form-control" id="dateRangeInputXLSXPDF"
-                                        placeholder="MM/DD/YYYY" disabled>
+                                    <input type="text" class="form-control" id="dateRangeInputPDF"
+                                        placeholder="MM/DD/YYYY">
                                     <label for="floatingPassword">Date</label>
                                 </div>
 
-                                <button type="button" class="btn btn-success" id="exportToXLSXBtn" disabled>Export to
-                                    .XLSX</button>
-                                <button type="button" class="btn btn-danger" id="exportToXLSXBtn" disabled>Export to
+                               
+                                <button type="button" class="btn btn-danger" id="exportToPDFBtn">Export to
                                     .PDF</button>
                             </div>
                         </div>
@@ -189,12 +187,20 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>flatpickr("#dateRangeInput", {
             mode: "range",
-            dateFormat: "m-d-Y",
+            enableTime: true,
+            dateFormat: "m-d-Y h:i K",
         });
 
         flatpickr("#dateRangeInputImages", {
             mode: "range",
-            dateFormat: "m-d-Y",
+            enableTime: true,
+            dateFormat: "m-d-Y h:i K",
+        });
+
+        flatpickr("#dateRangeInputPDF", {
+            mode: "range",
+            enableTime: true,
+            dateFormat: "m-d-Y h:i K",
         });
 
     </script>
