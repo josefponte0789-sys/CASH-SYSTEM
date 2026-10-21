@@ -83,15 +83,13 @@
                         <button class="accordion-button collapsed exportxlsxpdffile" type="button"
                             data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                             aria-controls="panelsStayOpen-collapseTwo">
-                            <strong> (WORK IN
-                                PROGRESS)</strong> Export to a PDF File (.pdf)
+                            Export to PDF File (.pdf)
                         </button>
                     </h2>
                     <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                         <div class="accordion-body">
-                            <strong>Exports selected to .PDF file
-                                that contains user data and images.</strong>
-                            <code> Work in progess section.</code>
+                            <strong>Exports selected date range to .PDF file
+                                that contains user data and their image.</strong>
                             <div class="body-content">
                                 <div class="form-floating date-field">
                                     <input type="text" class="form-control" id="dateRangeInputPDF"
@@ -187,20 +185,17 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>flatpickr("#dateRangeInput", {
             mode: "range",
-            enableTime: true,
-            dateFormat: "m-d-Y h:i K",
+            dateFormat: "m-d-Y",
         });
 
         flatpickr("#dateRangeInputImages", {
             mode: "range",
-            enableTime: true,
-            dateFormat: "m-d-Y h:i K",
+            dateFormat: "m-d-Y",
         });
 
         flatpickr("#dateRangeInputPDF", {
             mode: "range",
-            enableTime: true,
-            dateFormat: "m-d-Y h:i K",
+            dateFormat: "m-d-Y",
         });
 
     </script>

@@ -113,7 +113,7 @@ userForm.addEventListener("submit", async (event) => {
     const dateFormat = document.getElementById("dateTime")._flatpickr;
 
 
-    const dateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d");
+    const dateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K");
 
     if (!stream) {
         alert("Please start the camera first");

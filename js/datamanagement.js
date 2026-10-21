@@ -11,8 +11,8 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
         return;
     }
 
-    const startDate = flatpickr.formatDate(dates[0], "Y-m-d");
-    const endDate = flatpickr.formatDate(dates[1], "Y-m-d");
+    const startDate = flatpickr.formatDate(dates[0], "Y-m-d h:i K");
+    const endDate = flatpickr.formatDate(dates[1], "Y-m-d h:i K");
 
 
 
@@ -68,8 +68,8 @@ document.getElementById("exportImages").addEventListener("click", async () => {
         return;
     }
 
-    const startDate = flatpickr.formatDate(imageDates[0], "Y-m-d");
-    const endDate = flatpickr.formatDate(imageDates[1], "Y-m-d");
+    const startDate = flatpickr.formatDate(imageDates[0], "Y-m-d h:i K");
+    const endDate = flatpickr.formatDate(imageDates[1], "Y-m-d h:i K");
 
     try {
         const result = await window.api.exportImages(startDate, endDate);
@@ -107,8 +107,8 @@ document.getElementById("exportToPDFBtn").addEventListener("click", async () =>{
 
     const dates = document.getElementById("dateRangeInputPDF")._flatpickr.selectedDates;
 
-    const startDate = flatpickr.formatDate(dates[0], "Y-m-d",);
-    const endDate = flatpickr.formatDate(dates[1], "Y-m-d");
+    const startDate = flatpickr.formatDate(dates[0], "Y-m-d h:i K",);
+    const endDate = flatpickr.formatDate(dates[1], "Y-m-d h:i K");
      try {
         const res = await window.api.exportPdf(startDate, endDate);
         if (res.success) alert(`Exported ${res.count} records to ${res.path}`);

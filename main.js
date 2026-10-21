@@ -157,8 +157,8 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 ipcMain.handle('export-data', async(event, startDate, endDate)=>{
 
 try{
-    const rows = db.prepare(`SELECT clientName, authorizedPersonnel, codeName, dateTime FROM clients WHERE date(dateTime) BETWEEN  date(?) AND date(?) 
-        ORDER BY dateTime ASC`).all(startDate, endDate);
+    const rows = db.prepare(`SELECT clientName, authorizedPersonnel, codeName, dateTime FROM clients WHERE substr(dateTime, 1, 10) BETWEEN ? AND ? 
+        ORDER BY dateTime ASC`).all(startDate.slice(0, 10), endDate.slice(0, 10));
 
         if (rows.length === 0){
             return{
@@ -171,7 +171,7 @@ try{
 
           const saveResult = await dialog.showSaveDialog({
             title: "Export Records",
-            defaultPath: `records_${startDate}_to_${endDate}.csv`,
+            defaultPath: `records_${startDate.slice(0, 10)}_to_${endDate.slice(0, 10)}.csv`,
             filters: [
                 {
                     name: "CSV Files",
@@ -180,7 +180,7 @@ try{
             ]
         });
 
-        if (saveResult.canceled) {
+        if (saveResult.canceled || !saveResult.filePath) {
             return {
                 success: false,
                 message: "Export cancelled."
@@ -189,7 +189,7 @@ try{
 
         fs.writeFileSync(
             saveResult.filePath,
-            csv,
+            "\uFEFF" + csv,
             "utf8"
         );
 
@@ -263,10 +263,10 @@ ipcMain.handle('export-images', async (event, startDate, endDate) => {
     const rows = db.prepare(`
       SELECT id, userWebcam, dateTime, clientName, authorizedPersonnel
       FROM clients
-      WHERE date(dateTime) BETWEEN date(?) AND date(?)
+      WHERE substr(dateTime, 1, 10) BETWEEN ? AND ?
         AND userWebcam IS NOT NULL
       ORDER BY dateTime ASC
-    `).all(startDate, endDate);
+    `).all(startDate.slice(0, 10), endDate.slice(0, 10));
 
      if (rows.length === 0){
             return{
@@ -409,11 +409,11 @@ ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
   let tmp;
   try {
     const rows = db.prepare(`
-      SELECT clientName, authorizedPersonnel, codeName, dateTime, userWebcam
-      FROM clients
-      WHERE date(dateTime) BETWEEN date(?) AND date(?)
-      ORDER BY dateTime ASC
-    `).all(startDate, endDate);
+    SELECT clientName, authorizedPersonnel, codeName, dateTime, userWebcam
+    FROM clients
+    WHERE substr(dateTime, 1, 10) BETWEEN ? AND ?
+    ORDER BY dateTime ASC
+    `).all(startDate.slice(0, 10), endDate.slice(0, 10));
 
     if (rows.length === 0) {
       return { success: false, message: 'No records found for this date range.' };
@@ -421,7 +421,7 @@ ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
 
     const saveResult = await dialog.showSaveDialog({
       title: 'Export Records',
-      defaultPath: `records_${startDate}_to_${endDate}.pdf`,
+      defaultPath: `records_${startDate.slice(0, 10)}_to_${endDate.slice(0, 10)}.pdf`,
       filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
     });
     if (saveResult.canceled || !saveResult.filePath) {
@@ -435,7 +435,7 @@ ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
           ${src ? `<img src="${src}">` : `<div class="noimg">No image</div>`}
           <h2>${esc(r.clientName)}</h2>
           <p><b>Authorized personnel:</b> ${esc(r.authorizedPersonnel)}</p>
-          <p><b>Code name:</b> ${esc(r.codeName)}</p>
+          <p><b>Bank no:</b> ${esc(r.codeName)}</p>
           <p><b>Date/time:</b> ${esc(r.dateTime)}</p>
         </div>`;
     }).join('');

@@ -105,7 +105,7 @@ async function loadClient() {
     const dateFormat = dateInput._flatpickr;
 
 
-    dateFormat.setDate(client.dateTime, false, "Y-m-d");
+    dateFormat.setDate(client.dateTime, false, "Y-m-d h:i K");
 
 
 
@@ -161,7 +161,7 @@ editForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const dateFormat = document.getElementById("dateTime")._flatpickr;
-    const editDateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d");
+    const editDateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K");
 
 
     try {

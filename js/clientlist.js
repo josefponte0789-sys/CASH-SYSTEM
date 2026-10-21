@@ -53,12 +53,13 @@ DataTable.type('date', 'className', 'dt-body-left');
 const table = new DataTable('#myTable', {
     columnDefs: [
         {
-            width: '10%',
+            width: '15%',
             targets: 0,
             render: function(data, type, row){
-                if (type === 'display'){
-                    const [year, month, day] = data.split('-');
-                    return `${month}-${day}-${year}`;
+                if (type === 'display' && data){
+                    const[date, ...time] = data.split(' ');
+                    const [year, month, day] = date.split('-');
+                    return `${month}-${day}-${year}-${time.join(' ')}`;
                 }
                 return data;
             }
