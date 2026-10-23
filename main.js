@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
 const { autoUpdater } = require('electron-updater');
+const log = require('electron-log')
 
 const path = require('path')
 const fs = require('fs');
@@ -9,6 +10,45 @@ const { error } = require('console');
 
 let db;
 app.commandLine.appendSwitch('lang', 'en-US');
+
+
+let skippedVersion = null;
+autoUpdater.autoDownload = false;
+
+autoUpdater.on('update-available', async (info) => {
+    if (info.version === skippedVersion) return;
+
+    const result = await dialog.showMessageBox({
+        type: 'info',
+        title: 'CASH update available',
+        message: `Version ${info.version} is available.`,
+        detail: 'Would you like to update CASH now?',
+        buttons: ['Update Now', 'Remind Me Later', 'Skip This Version'],
+        defaultId: 0,
+        cancelId: 1,
+    });
+    if (result.response === 0) {
+        autoUpdater.downloadUpdate();
+    } else if (result.response === 2) {
+        skippedVersion = info.version;
+    }
+});
+
+autoUpdater.on('update-downloaded', async () => {
+    const result = await dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Ready',
+        message: `Update has been downloaded.`,
+        detail: 'Please restart the application to use the update.',
+        buttons: ['Restart Now', 'Later'],
+        defaultId: 0,
+        cancelId: 1,
+    });
+    if (result.response === 0) {
+        autoUpdater.quitAndInstall();
+    }
+});
+
 
 const createWindow = () => {
     
@@ -48,9 +88,11 @@ app.whenReady().then(() => {
 
     createWindow()
 
-    if (app.isPackaged) {
-        autoUpdater.checkForUpdatesAndNotify();
-    }
+  if (app.isPackaged) {
+    autoUpdater.logger = log;
+    autoUpdater.logger.transports.file.level = 'info';
+      autoUpdater.checkForUpdates();
+}
 });
 
 ipcMain.handle('save-form', async (event, formData, dateSelected, dateOfCheckSelected) => {
