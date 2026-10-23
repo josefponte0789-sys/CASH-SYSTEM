@@ -1,3 +1,5 @@
+
+
 const userForm = document.getElementById("userForm")
 let stream = null;
 
@@ -5,11 +7,14 @@ const userWebcam = document.getElementById("userWebcam");
 const startCamera = document.getElementById("startCamera");
 const videoDate = document.getElementById("videoDate");
 const dateTimeInput = document.getElementById("dateTime");
+const dateOfCheck = document.getElementById("dateOfCheck");
 const saveDataButton = document.getElementById("saveDataButton")
 
 
 
-
+document.getElementById("codeName").addEventListener("wheel", function (e)  {
+    e.preventDefault();
+}, {passive: false})
 
 
 
@@ -109,17 +114,30 @@ function stopCamera() {
 userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    
-    const dateFormat = document.getElementById("dateTime")._flatpickr;
-
-
-    const dateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K");
 
     if (!stream) {
         alert("Please start the camera first");
         return;
     }
     try {
+            
+    
+    const dateFormat = document.getElementById("dateTime")._flatpickr;
+    const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
+
+    const dateSelected = dateFormat.selectedDates[0]
+        ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
+        : null;
+
+    const dateOfCheckSelected = dateCheckFormat.selectedDates[0]
+        ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
+        : null;
+
+    if (!dateSelected || !dateOfCheckSelected) {
+        alert("ERROR: Please select both dates.");
+        return;
+    }
+    
         const dateTime = dateTimeInput.value;
         const webcamBytes = await captureFrame(userWebcam, dateTime);
 
@@ -127,28 +145,28 @@ userForm.addEventListener("submit", async (event) => {
             clientName: document.getElementById("clientName").value.toUpperCase(),
             authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
+            dateOfCheckValue: dateOfCheckSelected,
             dateTime: dateSelected,
             userWebcam: webcamBytes,
         }
 
-        const result = await window.api.saveForm(formData, dateSelected);
+        const result = await window.api.saveForm(formData, dateSelected, dateOfCheckSelected);
         
 
         if (result.success) {
-            userWebcam.pause();
             console.log("Saved at:", result.path)
-            alert("Data saved successfully! Press 'OK' to proceed.");
+            alert("SUCCESS: Data saved successfully! Press 'OK' to proceed.");
             userForm.reset();
             stopCamera();
             window.location.reload();
         } else {
             console.error(result.error);
-            alert("An error has occurred. Page will reload.");
+            alert("ERROR: An error has occurred. Page will reload.");
             window.location.reload();
         }
     } catch (error) {
-        alert("An error has occurred. Please reload the page.");
-        console.error("An error has occurred", error);
+        alert(" ERROR: An error has occurred. Please reload the page.", error);
+        console.error(" ERROR: An error has occurred", error);
     }
 })
 

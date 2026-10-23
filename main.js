@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
+const { autoUpdater } = require('electron-updater');
 
 const path = require('path')
 const fs = require('fs');
@@ -36,6 +37,7 @@ app.whenReady().then(() => {
         clientName TEXT NOT NULL,
         authorizedPersonnel TEXT NOT NULL,
         codeName TEXT NOT NULL,
+        dateOfCheck TEXT NOT NULL,
         dateTime TEXT NOT NULL,
         userWebcam BLOB
         )
@@ -45,15 +47,19 @@ app.whenReady().then(() => {
    
 
     createWindow()
+
+    if (app.isPackaged) {
+        autoUpdater.checkForUpdatesAndNotify();
+    }
 });
 
-ipcMain.handle('save-form', async (event, formData, dateSelected) => {
+ipcMain.handle('save-form', async (event, formData, dateSelected, dateOfCheckSelected) => {
 
     try {
         const stmt = db.prepare(
-            'INSERT INTO clients (clientName, authorizedPersonnel, codeName, dateTime, userWebcam) VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO clients (clientName, authorizedPersonnel, codeName,dateOfCheck, dateTime, userWebcam) VALUES (?, ?, ?, ?, ?, ?)'
         );
-        stmt.run(formData.clientName, formData.authorizedPersonnel, formData.codeName, dateSelected, formData.userWebcam);
+        stmt.run(formData.clientName, formData.authorizedPersonnel, formData.codeName, dateOfCheckSelected, dateSelected, formData.userWebcam);
         
         return { success: true };
     } catch (err) {
@@ -98,7 +104,7 @@ ipcMain.handle('get-client', async (event, id) => {
 })
 
 
-ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
+ipcMain.handle('update-form', async (event, formData, editDateSelected, editDateCheckSelected) => {
     try {
         let info;
 
@@ -108,6 +114,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
                 SET clientName = ?,
                     authorizedPersonnel = ?,
                     codeName = ?,
+                    dateOfCheck = ?,
                     dateTime = ?,
                     userWebcam = ?
                 WHERE id = ?
@@ -117,6 +124,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
                 formData.clientName,
                 formData.authorizedPersonnel,
                 formData.codeName,
+                editDateCheckSelected,
                 editDateSelected,
                 Buffer.from(formData.userWebcam),
                 formData.id
@@ -127,6 +135,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
                 SET clientName = ?,
                 authorizedPersonnel = ?,
                     codeName = ?,
+                    dateOfCheck = ?,
                     dateTime = ?
                 WHERE id = ?
             `);
@@ -135,6 +144,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
                 formData.clientName,
                 formData.authorizedPersonnel,
                 formData.codeName,
+                editDateCheckSelected,
                 editDateSelected,
                 formData.id
             );
@@ -157,7 +167,7 @@ ipcMain.handle('update-form', async (event, formData, editDateSelected) => {
 ipcMain.handle('export-data', async(event, startDate, endDate)=>{
 
 try{
-    const rows = db.prepare(`SELECT clientName, authorizedPersonnel, codeName, dateTime FROM clients WHERE substr(dateTime, 1, 10) BETWEEN ? AND ? 
+    const rows = db.prepare(`SELECT clientName, authorizedPersonnel, codeName, dateOfCheck, dateTime FROM clients WHERE substr(dateTime, 1, 10) BETWEEN ? AND ? 
         ORDER BY dateTime ASC`).all(startDate.slice(0, 10), endDate.slice(0, 10));
 
         if (rows.length === 0){
@@ -409,7 +419,7 @@ ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
   let tmp;
   try {
     const rows = db.prepare(`
-    SELECT clientName, authorizedPersonnel, codeName, dateTime, userWebcam
+    SELECT clientName, authorizedPersonnel, codeName, dateOfCheck, dateTime, userWebcam
     FROM clients
     WHERE substr(dateTime, 1, 10) BETWEEN ? AND ?
     ORDER BY dateTime ASC
@@ -435,8 +445,8 @@ ipcMain.handle('export-pdf', async (event, startDate, endDate) => {
           ${src ? `<img src="${src}">` : `<div class="noimg">No image</div>`}
           <h2>${esc(r.clientName)}</h2>
           <p><b>Authorized personnel:</b> ${esc(r.authorizedPersonnel)}</p>
-          <p><b>Bank no:</b> ${esc(r.codeName)}</p>
-          <p><b>Date/time:</b> ${esc(r.dateTime)}</p>
+          <p><b>Check no:</b> ${esc(r.codeName)}</p>
+          <p><b>Date of Check:</b> ${esc(r.dateOfCheck)}</p>
         </div>`;
     }).join('');
 

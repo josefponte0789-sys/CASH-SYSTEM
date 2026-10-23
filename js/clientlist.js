@@ -34,13 +34,13 @@ async function loadData() {
 
             if(result.success){
                 console.log("Save to:", result.path);
-                alert('Delete successful.');
+                alert('SUCCESS: Delete successful.');
                 window.location.reload()
                 
             }
             else{
-                console.log("An error has occurred", result.error);
-                alert('Delete failed, please reload the page and try again.', result.error);
+                console.log("ERROR: An error has occurred", result.error);
+                alert('ERROR: Delete failed, please reload the page and try again.', result.error);
             }
 
 

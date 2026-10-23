@@ -7,9 +7,14 @@ let stream = null;
 let clientId = null;
 const videoDate = document.getElementById("videoDate");
 const dateTimeInput = document.getElementById("dateTime");
+const dateOfCheck = document.getElementById("dateOfCheck");
 
 
 const saveDataButton = document.getElementById("saveDataButton")
+
+document.getElementById("codeName").addEventListener("wheel", function (e)  {
+    e.preventDefault();
+}, {passive: false})
 
 
 
@@ -101,11 +106,14 @@ async function loadClient() {
     document.getElementById("clientName").value = client.clientName;
     document.getElementById("authorizedPersonnel").value = client.authorizedPersonnel;
     document.getElementById("codeName").value = client.codeName;
+    const dateOfCheckInput = document.getElementById("dateOfCheck")
     const dateInput = document.getElementById("dateTime");
     const dateFormat = dateInput._flatpickr;
+    const dateOfCheckFormat = dateOfCheckInput._flatpickr;
 
 
     dateFormat.setDate(client.dateTime, false, "Y-m-d h:i K");
+    dateOfCheckFormat.setDate(client.dateOfCheck, false, "Y-m-d h:i K");
 
 
 
@@ -161,8 +169,21 @@ editForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const dateFormat = document.getElementById("dateTime")._flatpickr;
-    const editDateSelected = flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K");
+    
 
+    const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
+
+    const editDateSelected = dateFormat.selectedDates[0]
+    ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
+    : null;
+
+    const editDateCheckSelected = dateCheckFormat.selectedDates[0]
+    ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
+        : null;
+    
+    if (!editDateSelected || !editDateCheckSelected) {
+        alert("ERROR: Please select both dates.")
+    }
 
     try {
         const dateTime = dateTimeInput.value;
@@ -174,6 +195,7 @@ editForm.addEventListener("submit", async (event) => {
             clientName: document.getElementById("clientName").value.toUpperCase(),
             authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
             codeName: document.getElementById("codeName").value,
+            dateOfCheckValue: editDateCheckSelected,
             dateTime: editDateSelected,
                
         }
@@ -182,12 +204,12 @@ editForm.addEventListener("submit", async (event) => {
 
         }
 
-        const result = await window.api.updateForm(formData, editDateSelected);
+        const result = await window.api.updateForm(formData, editDateSelected, editDateCheckSelected);
 
         if (result.success) {
             userWebcam.pause();
             console.log("Saved at:", result.path)
-            alert("Data saved successfully!");
+            alert("SUCCESS: Data saved successfully!");
             stopCamera();
             window.location.reload()
             } else {
