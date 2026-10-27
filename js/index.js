@@ -121,6 +121,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function pauseCamera(){
+        userWebcam.pause();
+    }
+
+     function resumeCamera(){
+        userWebcam.play();
+    }
+
 
     const showConfirmDialog = document.getElementById("saveDataButton").addEventListener("click", function () {
 
@@ -134,8 +142,13 @@ document.addEventListener("DOMContentLoaded", function () {
         addModalHeader.style.backgroundColor = "#0d6efd";
         addEntryMessage.textContent = "Confirm saving this entry?"
 
-        stopCamera();
+        
          addEntryModal.show();
+         pauseCamera();
+
+         document.getElementById("addEntryModal").addEventListener("hidden.bs.modal",  () => {
+            resumeCamera();
+         });
     });
 
     const confirmSaveButton = document.getElementById("confirmSaveButton");
@@ -202,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Saved at:", result.path)
                 
                 userForm.reset();
-                
+                stopCamera();
                 messageStatus.innerHTML = "<p>Record saved successfully!</p>";
                 modalHeader.style.backgroundColor = "#198754";
                 confirmModalTitle.textContent = "Successful";

@@ -5,6 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
     const deleteEntryModal = new bootstrap.Modal(document.getElementById("deleteEntryModal"));
     const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+    const deleteEntryModalTitle = document.getElementById("deleteEntryModalTitle");
+    const deleteModalHeader = document.getElementById("deleteModalHeader");
+    const deleteEntryMessage = document.getElementById("deleteEntryMessage");
+
+
+    function deleteEntryModalContent(){
+        deleteEntryModalTitle.textContent = "Confirm delete?";
+        deleteEntryModalTitle.style.color = "white";
+        deleteEntryMessage.innerHTML = "<p>This will <strong>PERMANENTLY DELETE</strong> this entry.</p>";
+    }
 
 
 
@@ -16,7 +26,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!result.success) {
             console.error(result.error)
-            alert("An error has occurred. Please refresh the page.")
+            messageStatus.innerHTML = "<p>An error has occurred. Please refresh the page. (CTRL+R)</p>";
+            modalHeader.style.backgroundColor = "#dc3545";
+            confirmModalTitle.textContent = "ERROR";
+            confirmModalTitle.style.color = "white";
+            confirmModal.show();
             return;
         }
 
@@ -49,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             else if (deleteBtn) {
                 pendingDeleteId = deleteBtn.dataset.id;
+                deleteEntryModalContent();
                 deleteEntryModal.show();
             }
             confirmDeleteButton.addEventListener("click", async (event) => {
