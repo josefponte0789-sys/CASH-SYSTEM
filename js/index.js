@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalHeader = document.getElementById("modalHeader");
 
     const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
+    const addEntryModal = new bootstrap.Modal(document.getElementById("addEntryModal"));
 
 
     
@@ -69,7 +70,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         catch (error) {
             console.error("An error has occurred!: ", error.name, error.message);
-            alert("An error has occurred, please refresh the page or restart the camera.")
+            messageStatus.innerHTML = "<p>Camera starting failed. Please connect a camera to this PC and reload the page (CTRL+R).</p>";
+            modalHeader.style.backgroundColor = "#dc3545";
+            confirmModalTitle.textContent = "ERROR!";
+            confirmModalTitle.style.color = "white";
+            confirmModal.show();
         }
    
     }
@@ -117,13 +122,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    userForm.addEventListener("submit", async (event) => {
+    const showConfirmDialog = document.getElementById("saveDataButton").addEventListener("click", function () {
+
+        const addEntryModalTitle = document.getElementById("addEntryModalTitle");
+        const addModalHeader = document.getElementById("addModalHeader");
+        const addEntryMessage = document.getElementById("addEntryMessage");
+
+
+        addEntryModalTitle.textContent = "Confirmation"
+        addEntryModalTitle.style.color = "white";
+        addModalHeader.style.backgroundColor = "#0d6efd";
+        addEntryMessage.textContent = "Confirm saving this entry?"
+
+        stopCamera();
+         addEntryModal.show();
+    });
+
+    const confirmSaveButton = document.getElementById("confirmSaveButton");
+
+    confirmSaveButton.addEventListener("click", async (event) => {
         event.preventDefault();
-        
+
+
+
+        addEntryModal.hide();
+   
 
 
         if (!stream) {
-            alert("Please start the camera first");
+            messageStatus.innerHTML = "<p>Please start the camera first.</p>";
+            modalHeader.style.backgroundColor = "#fd7e14";
+            confirmModalTitle.textContent = "Notice";
+            confirmModalTitle.style.color = "white";
+            confirmModal.show();
             return;
         }
         try {
@@ -141,7 +172,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 : null;
 
             if (!dateSelected || !dateOfCheckSelected) {
-                alert("ERROR: Please select both dates.");
+                messageStatus.innerHTML = "<p>Missing data in one or both DATE fields. Please correct.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
                 return;
             }
     
@@ -156,10 +191,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 dateTime: dateSelected,
                 userWebcam: webcamBytes,
             }
-
             const result = await window.api.saveForm(formData, dateSelected, dateOfCheckSelected);
 
-            //for testing purposes VVVV
+            //for ERROR testing purposes VVVV
             // const result = {success:false, error: "result.error"}; standard error
             // const result = await new Promise.reject("DATABASE ERROR"); catchblock error 
 
@@ -168,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Saved at:", result.path)
                 
                 userForm.reset();
-                stopCamera();
+                
                 messageStatus.innerHTML = "<p>Record saved successfully!</p>";
                 modalHeader.style.backgroundColor = "#198754";
                 confirmModalTitle.textContent = "Successful";
@@ -186,11 +220,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
             } else if (result.error) {
                 console.error(result.error);
-                      messageStatus.innerHTML = "<p>Saving failed. Please reload the page (CTRL+R).</p>";
+                messageStatus.innerHTML = "<p>Saving failed. Please reload the page (CTRL+R).</p>";
                 modalHeader.style.backgroundColor = "#dc3545";
                 confirmModalTitle.textContent = "ERROR!";
                 confirmModalTitle.style.color = "white";
-                    confirmModal.show();
+                confirmModal.show();
                  document.getElementById("confirmModal").addEventListener(
                         "hidden.bs.modal",
                         () => {
