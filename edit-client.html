@@ -47,8 +47,13 @@
                     <div id="videoDate" class="video-date"></div>
                     <img id="clientPhoto" src="" alt="Client photo" class="client-photo">
                 </div>
-                <button type="button" id="startCamera" class="btn btn-outline-secondary retake-photo">Retake
-                    Photo</button>
+                <div class="photo-containers">
+                    <button type="button" id="startCamera" class="btn btn-outline-secondary retake-photo">Retake
+                        Photo</button>
+
+                    <button type="button" id="uploadPhoto" class="btn btn-warning upload-photo">Upload
+                        Photo</button>
+                </div>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="clientName" placeholder="Ex. Juan Dela Cruz">
                     <label for="clientName" name="clientName">Name of
@@ -62,17 +67,18 @@
                     <input type="number" class="form-control" id="codeName" placeholder="Ex. 1234567">
                     <label for=" floatingPassword" name="codeName">Check No.</label>
                 </div>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="dateOfCheck" placeholder="MM/DD/YYYY">
-                    <label for="floatingPassword">Date of Check</label>
-                </div>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
-                    <label for="floatingPassword">Date</label>
+                <div class="date-containers">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="dateOfCheck" placeholder="MM/DD/YYYY">
+                        <label for="floatingPassword">Date of Check</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="dateTime" placeholder="MM/DD/YYYY">
+                        <label for="floatingPassword">Date</label>
+                    </div>
                 </div>
                 <div class="save-button">
-                    <button type="submit" class="btn btn-outline-primary" id="saveDataButton"
-                        onclick="return confirm ('Save this user data?')">Save Data</button>
+                    <button type="button" class="btn btn-primary" id="saveDataButton">Save Data</button>
                 </div>
 
             </div>
@@ -102,21 +108,20 @@
     </div>
 
 
-    <!-- deleting modal -->
-    <div class="modal fade" id="deleteEntryModal" tabindex="-1" aria-labelledby="deleteEntryModalLabel"
-        aria-hidden="true">
+    <!-- edit modal -->
+    <div class="modal fade" id="editEntryModal" tabindex="-1" aria-labelledby="editEntryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-dark" id="deleteModalHeader">
-                    <h1 class="modal-title fs-5" id="deleteEntryModalTitle"></h1>
+                <div class="modal-header bg-primary" id="editModalHeader">
+                    <h1 class="modal-title fs-5" id="editEntryModalTitle"></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="deleteEntryMessage">
+                <div class="modal-body" id="editEntryMessage">
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Confirm</button>
+                    <button type="button" class="btn btn-primary" id="confirmEditButton">Confirm</button>
                 </div>
             </div>
         </div>

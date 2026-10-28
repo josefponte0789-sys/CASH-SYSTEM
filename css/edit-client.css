@@ -7,6 +7,7 @@ body {
         max-width: 550px;
         padding: 0px;
         margin-top: 0.2in;
+        margin-bottom: 0.2in;
     }
 
     .group-input h1 {
@@ -51,6 +52,7 @@ body {
     justify-content: center;
     margin-top: 0.3in;
     text-align: center;
+    margin-bottom: 0.2in;
     
    
 }
@@ -92,9 +94,6 @@ body {
     height: 440px;
 }
 
-.retake-photo{
-    margin-bottom: 15px;
-}
 
 
 .video-capture-screen{
@@ -128,4 +127,26 @@ body {
 
     text-shadow:
         2px 2px 4px black;
+}
+
+
+
+.date-containers{
+    display: flex;
+   gap: 1rem;
+}
+.date-containers .form-floating{
+    flex:1;
+}
+
+
+.photo-containers{
+    display: flex;
+
+    gap: 0.5rem;
+    margin-bottom: 15px;
+}
+
+.photo-containers .btn{
+        flex: 1;
 }

@@ -1,226 +1,318 @@
-startCamera = document.getElementById("startCamera");
-const userWebcam = document.getElementById("userWebcam")
-const videoContainer = document.getElementById("video-container");
-const editForm = document.getElementById("editForm");
-const clientPhoto = document.getElementById("clientPhoto");
-let stream = null;
-let clientId = null;
-const videoDate = document.getElementById("videoDate");
-const dateTimeInput = document.getElementById("dateTime");
-const dateOfCheck = document.getElementById("dateOfCheck");
+document.addEventListener("DOMContentLoaded", function () {
+
+    startCamera = document.getElementById("startCamera");
+    const userWebcam = document.getElementById("userWebcam")
+    const videoContainer = document.getElementById("video-container");
+    const editForm = document.getElementById("editForm");
+    const clientPhoto = document.getElementById("clientPhoto");
+    let stream = null;
+    let clientId = null;
+    const videoDate = document.getElementById("videoDate");
+    const dateTimeInput = document.getElementById("dateTime");
+    const dateOfCheck = document.getElementById("dateOfCheck");
+    const messageStatus = document.getElementById("messageStatus");
+    const confirmModalTitle = document.getElementById("confirmModalTitle");
+    const modalHeader = document.getElementById("modalHeader");
+
+    const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
+    const editEntryModal = new bootstrap.Modal(document.getElementById("editEntryModal"));
 
 
-const saveDataButton = document.getElementById("saveDataButton")
+    const saveDataButton = document.getElementById("saveDataButton")
 
-document.getElementById("codeName").addEventListener("wheel", function (e)  {
-    e.preventDefault();
-}, {passive: false})
-
-
-
-
-
-
-
-
-
-function disableSaveDataButton() {
-    saveDataButton.disabled = true;
-    saveDataButton.style.backgroundColor = "#DEDEDE";
-    saveDataButton.style.border = "none";
-    saveDataButton.innerText = "Please start camera first."
-    saveDataButton.style.color = "black";
-}
+    document.getElementById("codeName").addEventListener("wheel", function (e) {
+        e.preventDefault();
+    }, { passive: false })
 
 
 
-function enableSaveDataButton() {
-    saveDataButton.disabled = false;
-    saveDataButton.style.backgroundColor = "";
-    saveDataButton.style.border = "";
-    saveDataButton.innerText = "Save Data"
-    saveDataButton.style.color = "";
-}
 
 
-async function retakePhoto() {
-    dateTimeInput.addEventListener("change", () => {
-    videoDate.textContent = dateTimeInput.value;
-    });
-    const constraints = {
-        audio: false,
-        video: true,
+
+
+
+
+    function disableSaveDataButton() {
+        saveDataButton.disabled = true;
+        saveDataButton.style.backgroundColor = "#DEDEDE";
+        saveDataButton.style.border = "none";
+        saveDataButton.innerText = "Please start camera first."
+        saveDataButton.style.color = "black";
     }
-    try {
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        userWebcam.srcObject = stream;
 
-        if (userWebcam) {
-            userWebcam.style.display = "block";
+
+
+    function enableSaveDataButton() {
+        saveDataButton.disabled = false;
+        saveDataButton.style.backgroundColor = "";
+        saveDataButton.style.border = "";
+        saveDataButton.innerText = "Save Data"
+        saveDataButton.style.color = "";
+    }
+
+
+    async function retakePhoto() {
+        dateTimeInput.addEventListener("change", () => {
+            videoDate.textContent = dateTimeInput.value;
+        });
+        const constraints = {
+            audio: false,
+            video: true,
         }
-        else {
-            alert("An error has occurred. Please reload the page.")
-            console.error(userWebcam.error);
-        }
+        try {
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+            userWebcam.srcObject = stream;
+
+            if (userWebcam) {
+                userWebcam.style.display = "block";
+            }
+            else {
+                alert("An error has occurred. Please reload the page.")
+                console.error(userWebcam.error);
+            }
      
 
+        }
+        catch (error) {
+            console.error("An error has occurred!: ", error.name, error.message);
+            alert("An error has occurred, please refresh the page or restart the camera.")
+        }
+        clientPhoto.remove();
     }
-    catch (error) {
-        console.error("An error has occurred!: ", error.name, error.message);
-        alert("An error has occurred, please refresh the page or restart the camera.")
-    }
-    clientPhoto.remove();
-}
 
-startCamera.addEventListener("click", retakePhoto);
+    startCamera.addEventListener("click", retakePhoto);
 
 
 
-async function loadClient() {
-    const params = new URLSearchParams(window.location.search);
+    async function loadClient() {
+        const params = new URLSearchParams(window.location.search);
     
 
-    const id = params.get("id");
-    clientId = id;
+        const id = params.get("id");
+        clientId = id;
 
-    const result = await window.api.getClientId(id);
+        const result = await window.api.getClientId(id);
 
-    if (!result.success) {
-        console.error(result.error);
-        alert("An error has occurred, please try again.");
-        return;
-    }
+        if (!result.success) {
+            console.error(result.error);
+            alert("An error has occurred, please try again.");
+            return;
+        }
 
-    const client = result.client;
-    const photoEl = document.getElementById("clientPhoto");
-    if (result.client.userWebcamUrl) {
-        photoEl.src = result.client.userWebcamUrl;
-        photoEl.style.display = "block";
+        const client = result.client;
+        const photoEl = document.getElementById("clientPhoto");
+        if (result.client.userWebcamUrl) {
+            photoEl.src = result.client.userWebcamUrl;
+            photoEl.style.display = "block";
         
 
-    }
-    else {
-        photoEl.style.display = "none";
-    }
-    console.log("client object:", client);
-    document.getElementById("clientName").value = client.clientName;
-    document.getElementById("authorizedPersonnel").value = client.authorizedPersonnel;
-    document.getElementById("codeName").value = client.codeName;
-    const dateOfCheckInput = document.getElementById("dateOfCheck")
-    const dateInput = document.getElementById("dateTime");
-    const dateFormat = dateInput._flatpickr;
-    const dateOfCheckFormat = dateOfCheckInput._flatpickr;
+        }
+        else {
+            photoEl.style.display = "none";
+        }
+        console.log("client object:", client);
+        document.getElementById("clientName").value = client.clientName;
+        document.getElementById("authorizedPersonnel").value = client.authorizedPersonnel;
+        document.getElementById("codeName").value = client.codeName;
+        const dateOfCheckInput = document.getElementById("dateOfCheck")
+        const dateInput = document.getElementById("dateTime");
+        const dateFormat = dateInput._flatpickr;
+        const dateOfCheckFormat = dateOfCheckInput._flatpickr;
 
 
-    dateFormat.setDate(client.dateTime, false, "Y-m-d h:i K");
-    dateOfCheckFormat.setDate(client.dateOfCheck, false, "Y-m-d h:i K");
+        dateFormat.setDate(client.dateTime, false, "Y-m-d h:i K");
+        dateOfCheckFormat.setDate(client.dateOfCheck, false, "Y-m-d h:i K");
 
 
 
   
-}
-
-loadClient();
-
-function stopCamera() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop())
-        stream = null;
-    }
-}
-
-function captureFrame(videoEl) {
-     if (!videoEl.srcObject || !videoEl.videoWidth || !videoEl.videoHeight) {
-        return Promise.resolve(null);
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = videoEl.videoWidth;
-    canvas.height = videoEl.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-
-    
-    ctx.font = "30px Arial";
-    ctx.fontWeight = "bold";
-
-    const x = canvas.width - 300;
-    const y = canvas.height - 30;
-
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.strokeText(dateTimeInput.value, x, y);
-
-    ctx.fillStyle = "white";
-    ctx.fillText(dateTimeInput.value, x, y);
-
-    return new Promise((resolve, reject) => {
-        canvas.toBlob(async (blob) => {
-            if (!blob) return reject(new Error("Failed to capture frame"))
-            const arrayBuffer = await blob.arrayBuffer()
-            resolve(new Uint8Array(arrayBuffer))
-        }, "image/png")
-    })
-
-
-}
-
-
-editForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const dateFormat = document.getElementById("dateTime")._flatpickr;
-    
-
-    const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
-
-    const editDateSelected = dateFormat.selectedDates[0]
-    ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
-    : null;
-
-    const editDateCheckSelected = dateCheckFormat.selectedDates[0]
-    ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
-        : null;
-    
-    if (!editDateSelected || !editDateCheckSelected) {
-        alert("ERROR: Please select both dates.")
     }
 
-    try {
-        const dateTime = dateTimeInput.value;
-        const webcamBytes = await captureFrame(userWebcam, dateTime);
+    loadClient();
+
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop())
+            stream = null;
+        }
+    }
+
+    function captureFrame(videoEl) {
+        if (!videoEl.srcObject || !videoEl.videoWidth || !videoEl.videoHeight) {
+            return Promise.resolve(null);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = videoEl.videoWidth;
+        canvas.height = videoEl.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+    
+        ctx.font = "30px Arial";
+        ctx.fontWeight = "bold";
+
+        const x = canvas.width - 300;
+        const y = canvas.height - 30;
+
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.strokeText(dateTimeInput.value, x, y);
+
+        ctx.fillStyle = "white";
+        ctx.fillText(dateTimeInput.value, x, y);
+
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                if (!blob) return reject(new Error("Failed to capture frame"))
+                const arrayBuffer = await blob.arrayBuffer()
+                resolve(new Uint8Array(arrayBuffer))
+            }, "image/png")
+        })
+
+
+    }
+
+
+    function pauseCamera() {
+        userWebcam.pause();
+    }
+
+    function resumeCamera() {
+        userWebcam.play();
+    }
+    
+
+
+
+
+    const showConfirmDialog = document.getElementById("saveDataButton").addEventListener("click", function () {
+
+        const editEntryModalTitle = document.getElementById("editEntryModalTitle");
+        const editEntryMessage = document.getElementById("editEntryMessage");
+
+
+        editEntryModalTitle.textContent = "Confirmation"
+        editEntryModalTitle.style.color = "white";
+        editEntryMessage.textContent = "Confirm saving this entry?"
+
+        
+        editEntryModal.show();
+        if (stream !== null) {
+            pauseCamera();
+        }
+
+         document.getElementById("editEntryModal").addEventListener("hidden.bs.modal",  () => {
+            resumeCamera();
+         }, {once: true});
+    });
+    const confirmEditButton = document.getElementById("confirmEditButton");
+
+    confirmEditButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+
+
         
 
-        const formData = {
-            id: clientId,
-            clientName: document.getElementById("clientName").value.toUpperCase(),
-            authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
-            codeName: document.getElementById("codeName").value,
-            dateOfCheckValue: editDateCheckSelected,
-            dateTime: editDateSelected,
+        const dateFormat = document.getElementById("dateTime")._flatpickr;
+    
+
+        const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
+
+        const editDateSelected = dateFormat.selectedDates[0]
+            ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
+            : null;
+
+        const editDateCheckSelected = dateCheckFormat.selectedDates[0]
+            ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
+            : null;
+    
+        if (!editDateSelected || !editDateCheckSelected) {
+            messageStatus.innerHTML = "<p>Missing data in one or both DATE fields. Please correct.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                return;
+        }
+        editEntryModal.hide();
+
+        try {
+            const dateTime = dateTimeInput.value;
+            const webcamBytes = await captureFrame(userWebcam, dateTime);
+        
+
+            const formData = {
+                id: clientId,
+                clientName: document.getElementById("clientName").value.toUpperCase(),
+                authorizedPersonnel: document.getElementById("authorizedPersonnel").value.toUpperCase(),
+                codeName: document.getElementById("codeName").value,
+                dateOfCheckValue: editDateCheckSelected,
+                dateTime: editDateSelected,
                
-        }
-        if (webcamBytes != null) {
-            formData.userWebcam = webcamBytes;
+            }
+            if (webcamBytes != null) {
+                formData.userWebcam = webcamBytes;
 
-        }
+            }
 
-        const result = await window.api.updateForm(formData, editDateSelected, editDateCheckSelected);
+            const result = await window.api.updateForm(formData, editDateSelected, editDateCheckSelected);
+            // const result = { success: false, error : "Test" };
+            // const result = await new Promise.reject("Test Error");
 
-        if (result.success) {
-            userWebcam.pause();
-            console.log("Saved at:", result.path)
-            alert("SUCCESS: Data saved successfully!");
-            stopCamera();
-            window.location.reload()
+            if (result.success) {
+                console.log("Saved at:", result.path)
+                stopCamera();
+                messageStatus.innerHTML = "<p>Record saved successfully!</p>";
+                modalHeader.style.backgroundColor = "#198754";
+                confirmModalTitle.textContent = "Successful";
+                confirmModalTitle.style.color = "white";
+
+                    confirmModal.show();
+
+ 
+                    document.getElementById("confirmModal").addEventListener(
+                        "hidden.bs.modal",
+                        () => {
+                            window.location.reload();
+                        },
+                        { once: true }
+                    );
             } else {
                 console.error(result.error);
                 console.log(formData);
-                alert("An error has occurred.");
+                messageStatus.innerHTML = "<p>Saving failed. Please reload the page (CTRL+R).</p>";
+                modalHeader.style.backgroundColor = "#dc3545";
+                confirmModalTitle.textContent = "ERROR!";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                 document.getElementById("confirmModal").addEventListener(
+                        "hidden.bs.modal",
+                        () => {
+                            window.location.reload();
+                        },
+                        { once: true }
+                    );
             }
         
-    } catch (error) {
-        alert("An error has occurred. Please reload the page.");
-        console.error("An error has occurred", error);
-    }
+        } catch (error) {
+             messageStatus.innerHTML = "<p>DATABASE ERROR! Please reload the page (CTRL+R).</p>";
+            modalHeader.style.backgroundColor = "#dc3545";
+            confirmModalTitle.textContent = "ERROR!";
+            confirmModalTitle.style.color = "white";
+
+                confirmModal.show();
+
+
+                document.getElementById("confirmModal").addEventListener(
+                    "hidden.bs.modal",
+                    () => {
+                        window.location.reload();
+                    },
+                    { once: true }
+                );
+            console.error("An error has occurred", error);
+        }
     
-})
+    })
+});

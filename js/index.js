@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
          document.getElementById("addEntryModal").addEventListener("hidden.bs.modal",  () => {
             resumeCamera();
-         });
+         }, {once:true});
     });
 
     const confirmSaveButton = document.getElementById("confirmSaveButton");

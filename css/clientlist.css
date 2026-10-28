@@ -4,9 +4,25 @@ body{
 }
 @media screen and (max-width:1366px){
 
-        #myTable thead tr th:nth-child(4), 
-    #myTable thead tr th:nth-child(4) {
+        #myTable thead tr th:nth-child(1), 
+    #myTable thead tr th:nth-child(1) {
+    width: 15% !important;
+    }
+       #myTable thead tr th:nth-child(2), 
+    #myTable thead tr th:nth-child(2) {
     width: 25% !important;
+    }
+       #myTable thead tr th:nth-child(3), 
+    #myTable thead tr th:nth-child(3) {
+    width: 25% !important;
+    }
+      #myTable thead tr th:nth-child(4), 
+    #myTable thead tr th:nth-child(4) {
+    width: 15% !important;
+    }
+      #myTable thead tr th:nth-child(5), 
+    #myTable thead tr th:nth-child(5) {
+    width: 20% !important;
     }
     
 }
