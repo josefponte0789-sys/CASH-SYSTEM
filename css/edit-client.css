@@ -14,22 +14,36 @@ body {
         font-size: 24px;
     }
 
-    .video-container {
-        width: 100%;
-    }
-
-    .video-capture-screen {
-        width: 100%;
-        height: auto;
-        max-height: 350px;
-        object-fit: cover;
-    }
-
-    #clientPhoto {
+   .video-container {
     width: 100%;
-    height: auto;
-    max-height: none;
-    object-fit: contain;
+    max-width: 600px; 
+    height: 350px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+.video-capture-screen,
+#clientPhoto,
+.uploaded-photo {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    display: block;
+}
+
+
+
+#userWebcam,
+#uploadedPhoto {
+    display: none;
+}
+
+#uploadedPhoto{
+    margin-bottom: 15px;
 }
 
     .form-floating {

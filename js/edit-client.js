@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageStatus = document.getElementById("messageStatus");
     const confirmModalTitle = document.getElementById("confirmModalTitle");
     const modalHeader = document.getElementById("modalHeader");
+    const uploadPhotoBtn = document.getElementById("uploadPhoto");
+    const uploadPhotoInput = document.getElementById("uploadPhotoInput");
+    const uploadedPhoto = document.getElementById("uploadedPhoto");
+
+    let photoURL = null;
+
 
     const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
     const editEntryModal = new bootstrap.Modal(document.getElementById("editEntryModal"));
@@ -50,6 +56,31 @@ document.addEventListener("DOMContentLoaded", function () {
         saveDataButton.style.color = "";
     }
 
+    uploadPhotoBtn.addEventListener("click", () => uploadPhotoInput.click());
+
+    uploadPhotoInput.addEventListener("change", () => {
+        const file = uploadPhotoInput.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            alert("Please select an image file.")
+            return;
+        }
+        
+        
+        if (photoURL) URL.revokeObjectURL(photoURL);
+        photoURL = URL.createObjectURL(file);
+
+        stopCamera();
+        clientPhoto.style.display = "none";
+        userWebcam.style.display = "none";
+        uploadedPhoto.src = photoURL;
+        uploadedPhoto.style.display = "block";
+        
+
+        uploadPhotoInput.value = "";
+
+    });
 
     async function retakePhoto() {
         dateTimeInput.addEventListener("change", () => {
@@ -59,6 +90,10 @@ document.addEventListener("DOMContentLoaded", function () {
             audio: false,
             video: true,
         }
+        uploadedPhoto.style.display = "none";
+        userWebcam.style.display = "block";
+        clientPhoto.remove();
+
         try {
             stream = await navigator.mediaDevices.getUserMedia(constraints);
             userWebcam.srcObject = stream;
@@ -77,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("An error has occurred!: ", error.name, error.message);
             alert("An error has occurred, please refresh the page or restart the camera.")
         }
-        clientPhoto.remove();
+        
     }
 
     startCamera.addEventListener("click", retakePhoto);
@@ -137,41 +172,46 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function captureFrame(videoEl) {
-        if (!videoEl.srcObject || !videoEl.videoWidth || !videoEl.videoHeight) {
-            return Promise.resolve(null);
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+   function captureFrame(source) {
+    const isVideo = source instanceof HTMLVideoElement;
 
-    
-        ctx.font = "30px Arial";
-        ctx.fontWeight = "bold";
+    const width = isVideo ? source.videoWidth : source.naturalWidth;
+    const height = isVideo ? source.videoHeight : source.naturalHeight;
 
-        const x = canvas.width - 300;
-        const y = canvas.height - 30;
+    // Nothing to capture yet
+    if (!width || !height) return Promise.resolve(null);
+    if (isVideo && !source.srcObject) return Promise.resolve(null);
 
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
-        ctx.strokeText(dateTimeInput.value, x, y);
+    // Optional: cap the size so big uploads don't produce huge files
+    const MAX = 1280;
+    const scale = Math.min(1, MAX / Math.max(width, height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
 
-        ctx.fillStyle = "white";
-        ctx.fillText(dateTimeInput.value, x, y);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
 
-        return new Promise((resolve, reject) => {
-            canvas.toBlob(async (blob) => {
-                if (!blob) return reject(new Error("Failed to capture frame"))
-                const arrayBuffer = await blob.arrayBuffer()
-                resolve(new Uint8Array(arrayBuffer))
-            }, "image/png")
-        })
+    ctx.font = "bold 30px Arial";
 
+    const x = canvas.width - 300;
+    const y = canvas.height - 30;
 
-    }
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(dateTimeInput.value, x, y);
 
+    ctx.fillStyle = "white";
+    ctx.fillText(dateTimeInput.value, x, y);
+
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(async (blob) => {
+            if (!blob) return reject(new Error("Failed to capture frame"));
+            const arrayBuffer = await blob.arrayBuffer();
+            resolve(new Uint8Array(arrayBuffer));
+        }, "image/png");
+    });
+}
 
     function pauseCamera() {
         userWebcam.pause();
@@ -239,7 +279,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const dateTime = dateTimeInput.value;
-            const webcamBytes = await captureFrame(userWebcam, dateTime);
+            const activeSource = uploadedPhoto.style.display !== "none" ? uploadedPhoto : userWebcam;
+            const webcamBytes = await captureFrame(activeSource, dateTime);
         
 
             const formData = {
