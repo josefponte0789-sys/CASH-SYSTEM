@@ -7,6 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/edit-client.css">
+    <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
@@ -37,7 +38,9 @@
             </div>
         </div>
     </nav>
-    <div class="wrapper">
+
+    <div class="wrapper" id="editWrapper">
+
         <form id="editForm">
             <div class="group-input">
                 <h1>Edit Client Data</h1>
@@ -85,6 +88,11 @@
 
             </div>
         </form>
+
+        <div id="loader" style="display: none;">
+            <div class="spinner-border text-light" role="status">
+            </div>
+        </div>
     </div>
 
 
@@ -129,7 +137,24 @@
         </div>
     </div>
 
+
+
     <script src="js/bootstrap.bundle.js"></script>
+    <script>
+
+        const loader = document.getElementById("loader");
+
+        loader.style.transition = "opacity 1.75s";
+        loader.style.opacity = "opacity 0"
+
+        setTimeout(() => {
+            loader.style.display = "none";
+            document.getElementById("editWrapper").style.display = "block";
+        }, 550)
+
+
+
+    </script>
     <script src="js/edit-client.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -139,8 +164,7 @@
         });
 
         flatpickr("#dateOfCheck", {
-            enableTime: true,
-            dateFormat: "m-d-Y h:i K",
+            dateFormat: "m-d-Y",
         });
     </script>
 

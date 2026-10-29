@@ -175,17 +175,37 @@ document.addEventListener("DOMContentLoaded", function () {
     
             const dateFormat = document.getElementById("dateTime")._flatpickr;
             const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
+            const clientNameField = document.getElementById("clientName");
+            const checkNoField = document.getElementById("codeName");
 
             const dateSelected = dateFormat.selectedDates[0]
                 ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
                 : null;
 
             const dateOfCheckSelected = dateCheckFormat.selectedDates[0]
-                ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
+                ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d")
                 : null;
 
             if (!dateSelected || !dateOfCheckSelected) {
                 messageStatus.innerHTML = "<p>Missing data in one or both DATE fields. Please correct.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                return;
+            }
+
+            if (!clientNameField.value.trim()) {
+                messageStatus.innerHTML = "<p>Please input the client's name.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                return;
+            }
+
+            if (!checkNoField.value) {
+                messageStatus.innerHTML = "<p>Please input the check no.</p>";
                 modalHeader.style.backgroundColor = "#fd7e14";
                 confirmModalTitle.textContent = "Notice";
                 confirmModalTitle.style.color = "white";

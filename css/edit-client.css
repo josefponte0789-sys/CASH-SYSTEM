@@ -164,3 +164,21 @@ body {
 .photo-containers .btn{
         flex: 1;
 }
+
+
+@keyframes tablepop {
+  from {
+
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#editWrapper{
+  display: none;
+  animation: tablepop 1.25s ease forwards;
+  
+
+}

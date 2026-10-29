@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log')
+const crypto = require('crypto');
+const { safeStorage } = require('electron');
 
 const path = require('path')
 const fs = require('fs');
@@ -23,7 +25,7 @@ autoUpdater.on('update-available', async (info) => {
         title: 'CASH update available',
         message: `Version ${info.version} is available.`,
         detail: 'Would you like to update CASH now?',
-        buttons: ['Update Now', 'Remind Me Later', 'Skip This Version'],
+        buttons: ['Update Now', 'Remind Me Later'],
         defaultId: 0,
         cancelId: 1,
     });
@@ -84,6 +86,19 @@ app.whenReady().then(() => {
         
     `)
 
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTO INCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        passwordHash TEXT NOT NULL,
+        salt TEXT NOT NULL,
+        createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+
+
+
    
 
     createWindow()
@@ -94,6 +109,21 @@ app.whenReady().then(() => {
       autoUpdater.checkForUpdates();
 }
 });
+
+let currentUser = null;
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return { salt, hash };
+}
+
+ipcMain.handle('auth:hasUsers', () => {
+    return db.prepare('SELECT COUNT (*) AS n FROM users').get().n > 0
+});
+
+
+
+
 
 ipcMain.handle('save-form', async (event, formData, dateSelected, dateOfCheckSelected) => {
 

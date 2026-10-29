@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         dateFormat.setDate(client.dateTime, false, "Y-m-d h:i K");
-        dateOfCheckFormat.setDate(client.dateOfCheck, false, "Y-m-d h:i K");
+        dateOfCheckFormat.setDate(client.dateOfCheck, false, "Y-m-d");
 
 
 
@@ -178,11 +178,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const width = isVideo ? source.videoWidth : source.naturalWidth;
     const height = isVideo ? source.videoHeight : source.naturalHeight;
 
-    // Nothing to capture yet
     if (!width || !height) return Promise.resolve(null);
     if (isVideo && !source.srcObject) return Promise.resolve(null);
 
-    // Optional: cap the size so big uploads don't produce huge files
     const MAX = 1280;
     const scale = Math.min(1, MAX / Math.max(width, height));
     const canvas = document.createElement("canvas");
@@ -249,22 +247,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     confirmEditButton.addEventListener("click", async (event) => {
         event.preventDefault();
-
+        editEntryModal.hide();
 
 
         
 
         const dateFormat = document.getElementById("dateTime")._flatpickr;
-    
-
         const dateCheckFormat = document.getElementById("dateOfCheck")._flatpickr;
+        const clientNameField = document.getElementById("clientName");
+        const checkNoField = document.getElementById("codeName");
+
 
         const editDateSelected = dateFormat.selectedDates[0]
             ? flatpickr.formatDate(dateFormat.selectedDates[0], "Y-m-d h:i K")
             : null;
 
         const editDateCheckSelected = dateCheckFormat.selectedDates[0]
-            ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d h:i K")
+            ? flatpickr.formatDate(dateCheckFormat.selectedDates[0], "Y-m-d")
             : null;
     
         if (!editDateSelected || !editDateCheckSelected) {
@@ -275,7 +274,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmModal.show();
                 return;
         }
-        editEntryModal.hide();
+
+        if (!clientNameField.value.trim()) {
+                messageStatus.innerHTML = "<p>Please input the client's name.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                return;
+            }
+
+            if (!checkNoField.value) {
+                messageStatus.innerHTML = "<p>Please input the check no.</p>";
+                modalHeader.style.backgroundColor = "#fd7e14";
+                confirmModalTitle.textContent = "Notice";
+                confirmModalTitle.style.color = "white";
+                confirmModal.show();
+                return;
+            }
+
+
+
 
         try {
             const dateTime = dateTimeInput.value;
