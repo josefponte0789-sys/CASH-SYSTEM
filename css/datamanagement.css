@@ -77,3 +77,14 @@ body {
   
 
 }
+
+.about-section{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.about-section p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}

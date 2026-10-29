@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron');
+const { captureRejectionSymbol } = require('events');
 
 contextBridge.exposeInMainWorld('api', {
     saveForm: (data, dateSelected, dateOfCheckSelected) => ipcRenderer.invoke("save-form", data, dateSelected, dateOfCheckSelected),
@@ -11,4 +12,16 @@ contextBridge.exposeInMainWorld('api', {
     exportImages:(startDate, endDate) => ipcRenderer.invoke("export-images", startDate, endDate),
     importDatabase:() => ipcRenderer.invoke("import-db"),
     exportPdf: (startDate, endDate) => ipcRenderer.invoke('export-pdf', startDate, endDate),
+});
+
+contextBridge.exposeInMainWorld('auth',{
+    hasUsers: () => ipcRenderer.invoke('auth:hasUsers'),
+    register:(data) => ipcRenderer.invoke('auth:register', data),
+    login:(data) => ipcRenderer.invoke('auth:login', data),
+    logout: () => ipcRenderer.invoke('auth:logout'),
+    currentUser: () => ipcRenderer.invoke('auth:currentUser'),
+});
+
+contextBridge.exposeInMainWorld('appInfo',{
+    getVersion: () => ipcRenderer.invoke('get-app-version'),
 })

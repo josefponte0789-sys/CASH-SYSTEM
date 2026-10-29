@@ -1,0 +1,29 @@
+body {
+    background-color: #1e2124 !important;
+}
+
+
+
+.wrapper h1{
+    text-align: center;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-top: 1in;
+    border-radius: 15px;
+  
+}
+
+.button-containers{
+    display: flex;
+   gap: 1rem;
+}
+.button-containers .btn{
+    flex:1;
+}

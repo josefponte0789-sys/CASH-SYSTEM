@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Register</title>
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/login.css">
+    </head>
+    <body>
+
+        <div class="wrapper">
+            <h1 id="title">Login</h1>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1"
+                        class="form-label">Username</label>
+                    <input type="username" class="form-control"
+                        id="username"
+                        placeholder="Username:" name="username">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1"
+                        class="form-label">Password</label>
+                    <input type="password" class="form-control"
+                        id="password"
+                        placeholder="*********" name="password">
+                </div>
+                <!-- <div class="mb-3">
+                    <p id="error"></p>
+                </div> -->
+                
+                <div class="button-containers">
+                    <button type="submit"
+                        class="btn btn-primary" id="submitBtn">Login</button>
+                </div>
+
+
+            </form>
+        </div>
+
+
+
+
+        <!-- Confirm modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="modalHeader">
+                    <h1 class="modal-title fs-5" id="confirmModalTitle"></h1>
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageStatus">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+
+        <script src="js/bootstrap.bundle.js"></script>
+        <script src="js/login.js"></script>
+    </body>
+</html>

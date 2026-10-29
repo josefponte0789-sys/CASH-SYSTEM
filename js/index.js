@@ -130,6 +130,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    document.getElementById("logoutBtn").addEventListener("click", async ()=> {
+        await window.auth.logout();
+        sessionStorage.setItem("loggedOut", "true");
+        window.location.href = "login.html";
+    });
+
+ 
+
+
     const showConfirmDialog = document.getElementById("saveDataButton").addEventListener("click", function () {
 
         const addEntryModalTitle = document.getElementById("addEntryModalTitle");

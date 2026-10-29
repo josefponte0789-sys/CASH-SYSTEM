@@ -58,12 +58,15 @@ const createWindow = () => {
         width: 1366,
         height: 768,
         webPreferences:{
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
         }
+        
     })
     // win.removeMenu()
 
-    win.loadFile('index.html')
+    win.loadFile('login.html')
 
 }
 
@@ -84,11 +87,11 @@ app.whenReady().then(() => {
         userWebcam BLOB
         )
         
-    `)
+    `);
 
     db.exec(`
         CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTO INCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         passwordHash TEXT NOT NULL,
         salt TEXT NOT NULL,
@@ -118,9 +121,51 @@ function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
 }
 
 ipcMain.handle('auth:hasUsers', () => {
-    return db.prepare('SELECT COUNT (*) AS n FROM users').get().n > 0
+    return db.prepare('SELECT COUNT(*) AS n FROM users').get().n > 0
 });
 
+
+ipcMain.handle('auth:register', (event, {username, password}) => {
+   const count = db.prepare('SELECT COUNT(*) AS n from users').get().n;
+   if(count > 0 && !currentUser) return {ok: false, error: 'Not authorized.'};
+   if(!username?.trim() || !password || password.length < 6){
+    return{ok: false, error: 'Username required, password minimum of 6 characters.'};
+   } 
+
+   try{
+    const {salt, hash} = hashPassword(password);
+    db.prepare('INSERT INTO users (username, passwordHash, salt) VALUES (?, ?, ?)').run(username.trim(), hash, salt);
+    return{ok: true};
+   }
+   catch(err){
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') return {ok: false, error: 'Username already exists.'};
+    return {ok: false, error: 'Registration failed.'};
+   }
+});
+
+ipcMain.handle('auth:login', (event, {username, password}) =>{
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username?.trim());
+    if(!user) return {ok: false, error: 'Invalid username or password.'};
+
+    const {hash} = hashPassword(password, user.salt);
+    const valid =crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(user.passwordHash, 'hex'));
+    if (!valid) return {ok: false, error: 'Invalid username or password.'};
+
+    currentUser = {id: user.id, username: user.username};
+    return{ ok:true, user:currentUser};
+
+});
+
+ipcMain.handle('auth:logout', () =>{
+    currentUser = null;
+    return{ok: true};
+});
+ipcMain.handle('auth:currentUser', () => currentUser);
+
+ipcMain.handle('clients:getAll', () =>{
+if(!currentUser) throw new Error('Please login before proceeding.');
+return db.prepare('SELECT * FROM clients').all();
+});
 
 
 
@@ -581,3 +626,6 @@ p { margin: 2px 0; font-size: 11px; color: #444; word-break: break-word; }
     if (tmp && fs.existsSync(tmp)) fs.unlinkSync(tmp);
   }
 });
+
+
+ipcMain.handle('get-app-version', () => app.getVersion());
