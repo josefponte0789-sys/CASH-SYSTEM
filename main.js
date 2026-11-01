@@ -60,7 +60,8 @@ const createWindow = () => {
         webPreferences:{
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
-            nodeIntegration: false
+            nodeIntegration: false,
+            // devTools: false,
         }
         
     })
@@ -95,10 +96,13 @@ app.whenReady().then(() => {
         username TEXT NOT NULL UNIQUE,
         passwordHash TEXT NOT NULL,
         salt TEXT NOT NULL,
+        role TEXT NOT NULL default 'staff' CHECK (role IN ('admin', 'staff')),
+        mustChangePassword INTEGER NOT NULL DEFAULT 0,
         createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
     `);
 
+    seedAdmin();
 
 
 
@@ -120,21 +124,35 @@ function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
     return { salt, hash };
 }
 
-ipcMain.handle('auth:hasUsers', () => {
-    return db.prepare('SELECT COUNT(*) AS n FROM users').get().n > 0
-});
+
+function seedAdmin(){
+    const hasAdmin = db.prepare(`SELECT 1 FROM users WHERE role = 'admin' LIMIT 1`).get();
+    if (hasAdmin) return;
+
+    const{salt, hash} = hashPassword('pontejosef789');
+    db.prepare(`INSERT INTO users (username, passwordHash, salt, role, mustChangePassword) VALUES (?, ?, ?, 'admin', 1)`).run('admin', hash, salt)
+}
+
+
+
+function requireLogin(){
+    if (!currentUser) throw new Error("Not logged in.");
+}
+function requireAdmin(){
+    if (!currentUser || currentUser.role !== 'admin') throw new Error("Admin only.");
+}
+
+
 
 
 ipcMain.handle('auth:register', (event, {username, password}) => {
-   const count = db.prepare('SELECT COUNT(*) AS n from users').get().n;
-   if(count > 0 && !currentUser) return {ok: false, error: 'Not authorized.'};
    if(!username?.trim() || !password || password.length < 6){
     return{ok: false, error: 'Username required, password minimum of 6 characters.'};
    } 
 
    try{
     const {salt, hash} = hashPassword(password);
-    db.prepare('INSERT INTO users (username, passwordHash, salt) VALUES (?, ?, ?)').run(username.trim(), hash, salt);
+    db.prepare(`INSERT INTO users (username, passwordHash, salt, role) VALUES (?, ?, ?, 'staff')`).run(username.trim(), hash, salt);
     return{ok: true};
    }
    catch(err){
@@ -151,8 +169,8 @@ ipcMain.handle('auth:login', (event, {username, password}) =>{
     const valid =crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(user.passwordHash, 'hex'));
     if (!valid) return {ok: false, error: 'Invalid username or password.'};
 
-    currentUser = {id: user.id, username: user.username};
-    return{ ok:true, user:currentUser};
+    currentUser = {id: user.id, username: user.username, role:user.role};
+    return{ ok:true, user:currentUser, mustChangPassword: !!user.mustChangPassword};
 
 });
 
@@ -163,9 +181,66 @@ ipcMain.handle('auth:logout', () =>{
 ipcMain.handle('auth:currentUser', () => currentUser);
 
 ipcMain.handle('clients:getAll', () =>{
+    requireLogin();
 if(!currentUser) throw new Error('Please login before proceeding.');
 return db.prepare('SELECT * FROM clients').all();
 });
+
+ipcMain.handle('auth:changePassword', (event, {currentPassword, newPassword})=> {
+    requireLogin();
+
+    if(!newPassword || newPassword.length < 6){
+        return {ok:false, error: 'Password must be more than 6 characters.'}
+    }
+    const user = db.prepare("SELECT * FROM users where id = ?").get(currentUser.id);
+    const {hash} = hashPassword(currentPassword || '', user.salt);
+    if(!crypto.timingSafeEqual(Buffer.from(hash,'hex'), Buffer.from(user.passwordHash, 'hex'))){
+        return {ok: false, error: 'Current password is incorrect.'};
+    }
+
+    const pw = hashPassword(newPassword);
+    db.prepare('UPDATE users SET passwordHash = ?, salt = ?, mustChangePassword = 0 WHERE id = ?').run(pw.hash, pw.salt, user.id);
+    return{ok: true};
+
+});
+
+ipcMain.handle('admin:listUsers', () =>{
+    requireAdmin();
+    return db.prepare('SELECT id, username, role, createdAt FROM users ORDER BY username').all();
+
+});
+
+ipcMain.handle('admin:setRole', (event, {userId, role}) =>{
+    requireAdmin();
+    if (!['admin', 'staff'].includes(role)) return {ok: false, error : 'Invalid role.'};
+
+    const admins = db.prepare(`SELECT COUNT(*) AS n FROM users WHERE role = 'admin'`).get().n;
+    const target = db.prepare(`SELECT role FROM users WHERE id = ?`).get(userId);
+    if(target?.role === 'admin' && role !== 'admin' && admins <= 1){
+        return{ok: false, error: 'Cannot remove last admin.'};
+    }
+    db.prepare('UPDATE users SET role = ? WHERE id = ?').run(role, userId);
+    return{ok: true};
+});
+
+ipcMain.handle('admin:resetPassword', (event, {userId, newPassword}) =>{
+    requireAdmin();
+        if(!newPassword || newPassword.length < 6){
+        return {ok:false, error: 'Password must be more than 6 characters.'}
+    }
+    const pw = hashPassword(newPassword);
+
+    db.prepare('UPDATE users SET passwordHash = ?, salt = ?, mustChangePassword = 1 WHERE id = ?').run(pw.hash, pw.salt, userId);
+    return{ok: true};
+});
+
+ipcMain.handle('admin:deleteUser', (event, {userId})=>{
+    requireAdmin();
+    if(userId === currentUser.id) return{ok: false, error: "You cannot delete your own account."};
+    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+    return{ok: true};
+});
+
 
 
 

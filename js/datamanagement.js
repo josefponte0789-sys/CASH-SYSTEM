@@ -1,6 +1,16 @@
 
 
+    document.getElementById("logoutBtn").addEventListener("click", async ()=> {
+        await window.auth.logout();
+        sessionStorage.setItem("loggedOut", "true");
+        window.location.href = "login.html";
+    });
+
+
+
 document.getElementById("exportBtn").addEventListener("click", async () => {
+
+    
 
 
     const dates = document.getElementById("dateRangeInput")._flatpickr.selectedDates;
@@ -121,6 +131,9 @@ document.getElementById("exportToPDFBtn").addEventListener("click", async () =>{
 
     }
 })
+
+
+
 
 
 window.appInfo.getVersion().then((version)=>{

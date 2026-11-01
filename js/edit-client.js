@@ -1,5 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+        document.getElementById("logoutBtn").addEventListener("click", async ()=> {
+        await window.auth.logout();
+        sessionStorage.setItem("loggedOut", "true");
+        window.location.href = "login.html";
+    });
+
+
     startCamera = document.getElementById("startCamera");
     const userWebcam = document.getElementById("userWebcam")
     const videoContainer = document.getElementById("video-container");

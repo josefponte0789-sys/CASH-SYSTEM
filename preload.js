@@ -15,13 +15,20 @@ contextBridge.exposeInMainWorld('api', {
 });
 
 contextBridge.exposeInMainWorld('auth',{
-    hasUsers: () => ipcRenderer.invoke('auth:hasUsers'),
     register:(data) => ipcRenderer.invoke('auth:register', data),
     login:(data) => ipcRenderer.invoke('auth:login', data),
     logout: () => ipcRenderer.invoke('auth:logout'),
     currentUser: () => ipcRenderer.invoke('auth:currentUser'),
+    changePassword: (data) => ipcRenderer.invoke('auth:changePassword', data),
+    admin: {
+    listUsers: () => ipcRenderer.invoke('admin:listUsers'),
+    setRole: (data) => ipcRenderer.invoke('admin:setRole', data),
+    resetPassword: (data) => ipcRenderer.invoke('admin:resetPassword', data),
+    deleteUser: (data) => ipcRenderer.invoke('admin:deleteUser', data),
+    },
 });
 
 contextBridge.exposeInMainWorld('appInfo',{
     getVersion: () => ipcRenderer.invoke('get-app-version'),
+  
 })

@@ -21,15 +21,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     let registerMode = false;
 
-    (async () =>{
-       registerMode = !(await window.auth.hasUsers());
-       if(registerMode){
-        document.getElementById("title").textContent = "Register initial account";
-        document.getElementById("submitBtn").textContent = "Register"
 
-       }
-    
-    })();
 
      
 
@@ -77,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
 
         if(!registerMode){
-            const res = await window.auth.login({username, password});
+            const res = await window.auth.login({username: username.trim(), password});
             if(!res.ok){
                 messageStatus.textContent = res.error;
                 modalHeader.style.backgroundColor = "#dc3545";
@@ -86,9 +78,17 @@ document.addEventListener("DOMContentLoaded", () =>{
                 confirmModal.show();
                 return;
                 }  
+
+            if(res.mustChangePassword){
+            window.location.href = "change-password.html";
+            }
+            else{
+            window.location.href = 'index.html';
+            }
+            window.location.href = 'index.html';
         }
 
-        window.location.href = 'index.html';
+         
 
     });
 

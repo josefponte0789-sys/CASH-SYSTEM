@@ -46,6 +46,19 @@ document.addEventListener("DOMContentLoaded", function () {
         saveDataButton.style.color = "";
     }
 
+    
+
+    (async () => {
+        const user = await window.auth.currentUser();
+        if (!user) return (window.location.href = 'login.html');
+
+        document.getElementById('currentUser').textContent = `${user.username} (${user.role})`;
+
+        if (user.role !== 'admin'){
+            document.querySelectorAll('.admin-only').forEach(el = el.remove());
+        }
+    })();
+
 
     async function getWebcam() {
 
