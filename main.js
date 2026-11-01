@@ -1,8 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log')
-const crypto = require('crypto');
-const { safeStorage } = require('electron');
+
 
 const path = require('path')
 const fs = require('fs');
@@ -86,16 +85,7 @@ app.whenReady().then(() => {
         
     `)
 
-    db.exec(`
-        CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTO INCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        passwordHash TEXT NOT NULL,
-        salt TEXT NOT NULL,
-        createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-
+  
 
 
 
@@ -110,16 +100,6 @@ app.whenReady().then(() => {
 }
 });
 
-let currentUser = null;
-
-function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
-    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
-    return { salt, hash };
-}
-
-ipcMain.handle('auth:hasUsers', () => {
-    return db.prepare('SELECT COUNT (*) AS n FROM users').get().n > 0
-});
 
 
 
