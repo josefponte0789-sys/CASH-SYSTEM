@@ -123,3 +123,6 @@ document.getElementById("exportToPDFBtn").addEventListener("click", async () =>{
 })
 
 
+window.appInfo.getVersion().then((version)=>{
+   document.getElementById("app-version").textContent = version; 
+});
