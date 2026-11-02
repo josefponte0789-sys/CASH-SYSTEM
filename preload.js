@@ -12,3 +12,9 @@ contextBridge.exposeInMainWorld('api', {
     importDatabase:() => ipcRenderer.invoke("import-db"),
     exportPdf: (startDate, endDate) => ipcRenderer.invoke('export-pdf', startDate, endDate),
 })
+
+
+contextBridge.exposeInMainWorld('appInfo',{
+    getVersion: () => ipcRenderer.invoke('get-app-version'),
+  
+})

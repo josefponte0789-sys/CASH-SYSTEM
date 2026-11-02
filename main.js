@@ -561,3 +561,7 @@ p { margin: 2px 0; font-size: 11px; color: #444; word-break: break-word; }
     if (tmp && fs.existsSync(tmp)) fs.unlinkSync(tmp);
   }
 });
+
+
+
+ipcMain.handle('get-app-version', () => app.getVersion());
